@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -g -nostartfiles -Map=ZHONX_II_M4.map -O3 --gc-sections --specs=nano.specs -u _printf_float -LC:\CooCox\CoIDE\configuration\ProgramData\ZHONX_II_M4 -TC:\CooCox\CoIDE\configuration\ProgramData\ZHONX_II_M4/arm-gcc-link.ld -g -L..\..\..\..\..\..\..\Program Files (x86)\GNU Tools ARM Embedded\4.7 2013q1\arm-none-eabi\lib\armv7e-m\fpu -lm">
+      <target file="ZHONX_II_M4.elf" lastModified="13f68a56d56">
+         <source file="..\..\..\..\..\..\..\Program Files (x86)\GNU Tools ARM Embedded\4.7 2013q1\arm-none-eabi\lib\armv7e-m\fpu\libm.a" lastModified="13d5fdafd20"/>
+         <source file="..\obj\hal_step_motor.o" lastModified="13f68a5452e"/>
+         <source file="..\obj\hal_lm629.o" lastModified="13f68a5457c"/>
+         <source file="..\obj\stm32f4xx_syscfg.o" lastModified="13f68a545f8"/>
+         <source file="..\obj\hal_sensor.o" lastModified="13f68a546a4"/>
+         <source file="..\obj\stm32f4xx_sdio.o" lastModified="13f68a54750"/>
+         <source file="..\obj\hal_us_sensor.o" lastModified="13f68a5477e"/>
+         <source file="..\obj\stm32f4xx_usart.o" lastModified="13f68a54859"/>
+         <source file="..\obj\stm32f4xx_pwr.o" lastModified="13f68a548d6"/>
+         <source file="..\obj\test_hal_color_sensor.o" lastModified="13f68a54952"/>
+         <source file="..\obj\test_oled_exemple.o" lastModified="13f68a549ee"/>
+         <source file="..\obj\test_hal_step_motor.o" lastModified="13f68a54a6b"/>
+         <source file="..\obj\startup_stm32f4xx.o" lastModified="13f68a54ab9"/>
+         <source file="..\obj\test_step_motor_driver.o" lastModified="13f68a54b17"/>
+         <source file="..\obj\common_functions.o" lastModified="13f68a54be2"/>
+         <source file="..\obj\hal_ui.o" lastModified="13f68a54d87"/>
+         <source file="..\obj\stm32f4xx_crc.o" lastModified="13f68a54df4"/>
+         <source file="..\obj\test_hal_ui.o" lastModified="13f68a54e42"/>
+         <source file="..\obj\main.o" lastModified="13f68a54ea0"/>
+         <source file="..\obj\step_motor_driver.o" lastModified="13f68a5513e"/>
+         <source file="..\obj\stm32f4xx_rcc.o" lastModified="13f68a55219"/>
+         <source file="..\obj\test_hal_led.o" lastModified="13f68a55276"/>
+         <source file="..\obj\menus.o" lastModified="13f68a55332"/>
+         <source file="..\obj\hal_adc.o" lastModified="13f68a553ce"/>
+         <source file="..\obj\stm32f4xx_adc.o" lastModified="13f68a554a8"/>
+         <source file="..\obj\motor_driver.o" lastModified="13f68a55534"/>
+         <source file="..\obj\hal_os.o" lastModified="13f68a555c1"/>
+         <source file="..\obj\remote_control.o" lastModified="13f68a5560f"/>
+         <source file="..\obj\hal_serial.o" lastModified="13f68a556ca"/>
+         <source file="..\obj\hal_beeper.o" lastModified="13f68a55766"/>
+         <source file="..\obj\test_hal_sensor.o" lastModified="13f68a557e3"/>
+         <source file="..\obj\maze.o" lastModified="13f68a559a7"/>
+         <source file="..\obj\smallfonts.o" lastModified="13f68a559e6"/>
+         <source file="..\obj\ssd1306_peripherals.o" lastModified="13f68a55a62"/>
+         <source file="..\obj\zigbit_driver.o" lastModified="13f68a55ab0"/>
+         <source file="..\obj\test_maze_construct.o" lastModified="13f68a55aef"/>
+         <source file="..\obj\stm32f4xx_gpio.o" lastModified="13f68a55b8b"/>
+         <source file="..\obj\stm32f4xx_flash.o" lastModified="13f68a55cd3"/>
+         <source file="..\obj\list.o" lastModified="13f68a55d6f"/>
+         <source file="..\obj\system_stm32f4xx.o" lastModified="13f68a55ddc"/>
+         <source file="..\obj\syscalls.o" lastModified="13f68a55e2a"/>
+         <source file="..\obj\stm32f4xx_dma.o" lastModified="13f68a55ed5"/>
+         <source file="..\obj\hal_pid.o" lastModified="13f68a55f81"/>
+         <source file="..\obj\stm32f4xx_spi.o" lastModified="13f68a5604c"/>
+         <source file="..\obj\hal_nvm.o" lastModified="13f68a560e8"/>
+         <source file="..\obj\stm32f4xx_exti.o" lastModified="13f68a56155"/>
+         <source file="..\obj\test_maze_trajectoire.o" lastModified="13f68a56210"/>
+         <source file="..\obj\misc.o" lastModified="13f68a5626e"/>
+         <source file="..\obj\test_hal_adc.o" lastModified="13f68a562eb"/>
+         <source file="..\obj\motor_calibration.o" lastModified="13f68a56358"/>
+         <source file="..\obj\ssd1306.o" lastModified="13f68a5671f"/>
+         <source file="..\obj\hal_zigbit.o" lastModified="13f68a5679c"/>
+         <source file="..\obj\hal_led.o" lastModified="13f68a56809"/>
+         <source file="..\obj\stm32f4xx_tim.o" lastModified="13f68a5698f"/>
+         <source file="..\obj\test_hal_serial.o" lastModified="13f68a569cd"/>
+         <source file="..\obj\test_hal_beeper.o" lastModified="13f68a56a3b"/>
+      </target>
+   </processor>
+</history>

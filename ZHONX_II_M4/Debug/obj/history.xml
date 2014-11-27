@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<history>
+   <processor signature="arm-none-eabi-gcc noversion nomachine -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wall -ffunction-sections -g -O3 -c -DSTM32F405RG -DSTM32F4XX -DUSE_STDPERIPH_DRIVER -D__ASSEMBLY__ -D__VFP_FP__ -D__FPU_USED -I..\..\..\workspace\Zhonx_M4\pacabot\include\config -I..\..\..\workspace\Zhonx_M4\pacabot\include\oled -I..\..\..\workspace\Zhonx_M4\pacabot\include\hal -I..\..\..\workspace\Zhonx_M4\pacabot\include\drivers -I..\..\..\workspace\Zhonx_M4\pacabot\include\util -I..\..\..\workspace\Zhonx_M4\cmsis_boot -I..\..\..\workspace\Zhonx_M4 -I..\..\..\workspace\Zhonx_M4\cmsis_lib\include -I..\..\..\workspace\Zhonx_M4\cmsis_lib -I..\..\..\workspace -I..\..\..\workspace\Zhonx_M4\pacabot\src -I..\..\..\workspace\Zhonx_M4\cmsis -I..\..\..\workspace\Zhonx_M4\pacabot\src\app -I..\..\..\workspace\Zhonx_M4\pacabot -I..\..\..\workspace\Zhonx_M4\pacabot\include">
+      <target file="hal_sensor.o" lastModified="13f68a546a4">
+         <source file="..\..\..\pacabot\src\hal\hal_sensor\hal_sensor.c" lastModified="13ec30b8dbc"/>
+      </target>
+      <target file="syscalls.o" lastModified="13f68a55e2a">
+         <source file="..\..\..\syscalls\syscalls.c" lastModified="13ec30b8fcb"/>
+      </target>
+      <target file="test_hal_step_motor.o" lastModified="13f68a54a6b">
+         <source file="..\..\..\pacabot\src\tests\hal\test_hal_step_motor.c" lastModified="13ece4dacf5"/>
+      </target>
+      <target file="step_motor_driver.o" lastModified="13f68a5513e">
+         <source file="..\..\..\pacabot\src\drivers\step_motor_driver.c" lastModified="13ece38e025"/>
+      </target>
+      <target file="ssd1306_peripherals.o" lastModified="13f68a55a62">
+         <source file="..\..\..\pacabot\src\oled\ssd1306_peripherals.c" lastModified="13ec31a9a4a"/>
+      </target>
+      <target file="test_hal_sensor.o" lastModified="13f68a557e3">
+         <source file="..\..\..\pacabot\src\tests\hal\test_hal_sensor.c" lastModified="13ec30b8f2e"/>
+      </target>
+      <target file="hal_adc.o" lastModified="13f68a553ce">
+         <source file="..\..\..\pacabot\src\hal\hal_adc\hal_adc.c" lastModified="13ec77109c5"/>
+      </target>
+      <target file="misc.o" lastModified="13f68a5626e">
+         <source file="..\..\..\cmsis_lib\source\misc.c" lastModified="13ec30b8a01"/>
+      </target>
+      <target file="test_hal_led.o" lastModified="13f68a55276">
+         <source file="..\..\..\pacabot\src\tests\hal\test_hal_led.c" lastModified="13ec30b8f1d"/>
+      </target>
+      <target file="test_hal_color_sensor.o" lastModified="13f68a54952">
+         <source file="..\..\..\pacabot\src\tests\hal\test_hal_color_sensor.c" lastModified="13ec30b8f29"/>
+      </target>
+      <target file="hal_os.o" lastModified="13f68a555c1">
+         <source file="..\..\..\pacabot\src\hal\hal_os\hal_os.c" lastModified="13ec30b8d2e"/>
+      </target>
+      <target file="stm32f4xx_tim.o" lastModified="13f68a5698f">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_tim.c" lastModified="13ec30b8a0e"/>
+      </target>
+      <target file="stm32f4xx_exti.o" lastModified="13f68a56155">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_exti.c" lastModified="13ec30b8a07"/>
+      </target>
+      <target file="stm32f4xx_gpio.o" lastModified="13f68a55b8b">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_gpio.c" lastModified="13ec30b89c4"/>
+      </target>
+      <target file="test_hal_ui.o" lastModified="13f68a54e42">
+         <source file="..\..\..\pacabot\src\tests\hal\test_hal_ui.c" lastModified="13ec30b8f38"/>
+      </target>
+      <target file="hal_led.o" lastModified="13f68a56809">
+         <source file="..\..\..\pacabot\src\hal\hal_led\hal_led.c" lastModified="13ec30b8d6b"/>
+      </target>
+      <target file="hal_step_motor.o" lastModified="13f68a5452e">
+         <source file="..\..\..\pacabot\src\hal\hal_step_motor\hal_step_motor.c" lastModified="13ec30b8dd2"/>
+      </target>
+      <target file="hal_us_sensor.o" lastModified="13f68a5477e">
+         <source file="..\..\..\pacabot\src\hal\hal_us_sensor\hal_us_sensor.c" lastModified="13ec30b8d1a"/>
+      </target>
+      <target file="stm32f4xx_usart.o" lastModified="13f68a54859">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_usart.c" lastModified="13ec30b89d8"/>
+      </target>
+      <target file="stm32f4xx_rcc.o" lastModified="13f68a55219">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_rcc.c" lastModified="13ec30b89f3"/>
+      </target>
+      <target file="hal_lm629.o" lastModified="13f68a5457c">
+         <source file="..\..\..\pacabot\src\hal\hal_lm629\hal_lm629.c" lastModified="13ec30b8da5"/>
+      </target>
+      <target file="motor_driver.o" lastModified="13f68a55534">
+         <source file="..\..\..\pacabot\src\drivers\motor_driver.c" lastModified="13ec30b8e26"/>
+      </target>
+      <target file="stm32f4xx_pwr.o" lastModified="13f68a548d6">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_pwr.c" lastModified="13ec30b89fa"/>
+      </target>
+      <target file="test_step_motor_driver.o" lastModified="13f68a54b17">
+         <source file="..\..\..\pacabot\src\tests\drivers\test_step_motor_driver.c" lastModified="13ec30b8e82"/>
+      </target>
+      <target file="stm32f4xx_adc.o" lastModified="13f68a554a8">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_adc.c" lastModified="13ec30b89e6"/>
+      </target>
+      <target file="list.o" lastModified="13f68a55d6f">
+         <source file="..\..\..\pacabot\src\util\list.c" lastModified="13ec30b8df2"/>
+      </target>
+      <target file="stm32f4xx_flash.o" lastModified="13f68a55cd3">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_flash.c" lastModified="13ec30b89bd"/>
+      </target>
+      <target file="test_oled_exemple.o" lastModified="13f68a549ee">
+         <source file="..\..\..\pacabot\src\tests\oled\test_oled_exemple.c" lastModified="13ec30b8eb7"/>
+      </target>
+      <target file="startup_stm32f4xx.o" lastModified="13f68a54ab9">
+         <source file="..\..\..\cmsis_boot\startup\startup_stm32f4xx.c" lastModified="13ec30b902d"/>
+      </target>
+      <target file="remote_control.o" lastModified="13f68a5560f">
+         <source file="..\..\..\pacabot\src\tests\remote_control\remote_control.c" lastModified="13ec30b8f69"/>
+      </target>
+      <target file="stm32f4xx_dma.o" lastModified="13f68a55ed5">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_dma.c" lastModified="13ec30b89df"/>
+      </target>
+      <target file="zigbit_driver.o" lastModified="13f68a55ab0">
+         <source file="..\..\..\pacabot\src\drivers\zigbit_driver.c" lastModified="13ec30b8e1a"/>
+      </target>
+      <target file="smallfonts.o" lastModified="13f68a559e6">
+         <source file="..\..\..\pacabot\src\oled\smallfonts.c" lastModified="13ec30b8f99"/>
+      </target>
+      <target file="hal_nvm.o" lastModified="13f68a560e8">
+         <source file="..\..\..\pacabot\src\hal\hal_nvm\hal_nvm.c" lastModified="13ec30b8d07"/>
+      </target>
+      <target file="common_functions.o" lastModified="13f68a54be2">
+         <source file="..\..\..\pacabot\src\util\common_functions.c" lastModified="13ec30b8df8"/>
+      </target>
+      <target file="hal_beeper.o" lastModified="13f68a55766">
+         <source file="..\..\..\pacabot\src\hal\hal_beeper\hal_beeper.c" lastModified="13ec30b8d42"/>
+      </target>
+      <target file="hal_serial.o" lastModified="13f68a556ca">
+         <source file="..\..\..\pacabot\src\hal\hal_serial\hal_serial.c" lastModified="13ec30b8cf1"/>
+      </target>
+      <target file="stm32f4xx_crc.o" lastModified="13f68a54df4">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_crc.c" lastModified="13ec30b89ec"/>
+      </target>
+      <target file="hal_ui.o" lastModified="13f68a54d87">
+         <source file="..\..\..\pacabot\src\hal\hal_ui\hal_ui.c" lastModified="13ec76bfc76"/>
+      </target>
+      <target file="stm32f4xx_sdio.o" lastModified="13f68a54750">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_sdio.c" lastModified="13ec30b89cb"/>
+      </target>
+      <target file="test_hal_beeper.o" lastModified="13f68a56a3b">
+         <source file="..\..\..\pacabot\src\tests\hal\test_hal_beeper.c" lastModified="13ec30b8f12"/>
+      </target>
+      <target file="test_hal_serial.o" lastModified="13f68a569cd">
+         <source file="..\..\..\pacabot\src\tests\hal\test_hal_serial.c" lastModified="13ec30b8f42"/>
+      </target>
+      <target file="test_hal_adc.o" lastModified="13f68a562eb">
+         <source file="..\..\..\pacabot\src\tests\hal\test_hal_adc.c" lastModified="13ec30b8f23"/>
+      </target>
+      <target file="test_maze_trajectoire.o" lastModified="13f68a56210">
+         <source file="..\..\..\pacabot\src\tests\solvMaze\test_maze_trajectoire.c" lastModified="13ec30b8e9e"/>
+      </target>
+      <target file="menus.o" lastModified="13f68a55332">
+         <source file="..\..\..\pacabot\src\app\menus.c" lastModified="13ec5f2aa41"/>
+      </target>
+      <target file="ssd1306.o" lastModified="13f68a5671f">
+         <source file="..\..\..\pacabot\src\oled\ssd1306.c" lastModified="13ec31e0dbc"/>
+      </target>
+      <target file="stm32f4xx_syscfg.o" lastModified="13f68a545f8">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_syscfg.c" lastModified="13ec30b89d2"/>
+      </target>
+      <target file="stm32f4xx_spi.o" lastModified="13f68a5604c">
+         <source file="..\..\..\cmsis_lib\source\stm32f4xx_spi.c" lastModified="13ec30b89b6"/>
+      </target>
+      <target file="main.o" lastModified="13f68a54ea0">
+         <source file="..\..\..\main.c" lastModified="13ec30b8a45"/>
+      </target>
+      <target file="hal_pid.o" lastModified="13f68a55f81">
+         <source file="..\..\..\pacabot\src\hal\hal_pid\hal_pid.c" lastModified="13ec30b8cad"/>
+      </target>
+      <target file="system_stm32f4xx.o" lastModified="13f68a55ddc">
+         <source file="..\..\..\cmsis_boot\system_stm32f4xx.c" lastModified="13ec30b9061"/>
+      </target>
+      <target file="maze.o" lastModified="13f68a559a7">
+         <source file="..\..\..\pacabot\src\app\maze.c" lastModified="13ec30b8e5f"/>
+      </target>
+      <target file="hal_zigbit.o" lastModified="13f68a5679c">
+         <source file="..\..\..\pacabot\src\hal\hal_zigbit\hal_zigbit.c" lastModified="13ec30b8d91"/>
+      </target>
+      <target file="motor_calibration.o" lastModified="13f68a56358">
+         <source file="..\..\..\pacabot\src\tests\calibration\motor_calibration.c" lastModified="13ec30b8f54"/>
+      </target>
+      <target file="test_maze_construct.o" lastModified="13f68a55aef">
+         <source file="..\..\..\pacabot\src\tests\solvMaze\test_maze_construct.c" lastModified="13ec30b8ea5"/>
+      </target>
+   </processor>
+</history>
