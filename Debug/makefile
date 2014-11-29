@@ -59,38 +59,38 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 SECONDARY_FLASH += \
-ZHONX_II_COLIN.hex \
+zhonxII.hex \
 
 SECONDARY_SIZE += \
-ZHONX_II_COLIN.siz \
+zhonxII.siz \
 
 
 # All Target
-all: ZHONX_II_COLIN.elf secondary-outputs
+all: zhonxII.elf secondary-outputs
 
 # Tool invocations
-ZHONX_II_COLIN.elf: $(OBJS) $(USER_OBJS)
+zhonxII.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross ARM C Linker'
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mlittle-endian -mfloat-abi=hard -mfpu=fpv4-sp-d16 -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -g3 -T "/home/colin/workspace_eclipse_arm/ZHONX_II_COLIN/STM32F405RG_FLASH.ld" -Xlinker --gc-sections -Wl,-Map,"ZHONX_II_COLIN.map" -Wl,-cref,-u,Reset_Handler -o "ZHONX_II_COLIN.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mlittle-endian -mfloat-abi=hard -mfpu=fpv4-sp-d16 -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -g3 -T "/home/colin/workspace_eclipse_arm/zhonxII/STM32F405RG_FLASH.ld" -Xlinker --gc-sections -Wl,-Map,"zhonxII.map" -Wl,-cref,-u,Reset_Handler -o "zhonxII.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-ZHONX_II_COLIN.hex: ZHONX_II_COLIN.elf
+zhonxII.hex: zhonxII.elf
 	@echo 'Invoking: Cross ARM GNU Create Flash Image'
-	arm-none-eabi-objcopy -O ihex "ZHONX_II_COLIN.elf"  "ZHONX_II_COLIN.hex"
+	arm-none-eabi-objcopy -O ihex "zhonxII.elf"  "zhonxII.hex"
 	@echo 'Finished building: $@'
 	@echo ' '
 
-ZHONX_II_COLIN.siz: ZHONX_II_COLIN.elf
+zhonxII.siz: zhonxII.elf
 	@echo 'Invoking: Cross ARM GNU Print Size'
-	arm-none-eabi-size --format=berkeley "ZHONX_II_COLIN.elf"
+	arm-none-eabi-size --format=berkeley "zhonxII.elf"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(SECONDARY_SIZE)$(OBJS)$(C_DEPS)$(ASM_DEPS)$(SECONDARY_FLASH)$(S_DEPS)$(S_UPPER_DEPS) ZHONX_II_COLIN.elf
+	-$(RM) $(SECONDARY_SIZE)$(OBJS)$(C_DEPS)$(ASM_DEPS)$(SECONDARY_FLASH)$(S_DEPS)$(S_UPPER_DEPS) zhonxII.elf
 	-@echo ' '
 
 secondary-outputs: $(SECONDARY_FLASH) $(SECONDARY_SIZE)

@@ -68,7 +68,7 @@ void exploration(labyrinthe *maze, positionRobot* poitionZhonx,char xFinish, cha
 void move_zhonx (int direction_to_go, int *direction_robot);
 void new_cell(inputs new_walls, labyrinthe *maze, positionRobot positionZhonx);
 coordinate* new_dot(coordinate *old_dot,int x,int y, int length, labyrinthe *maze);
-void coup(labyrinthe *maze, int xFinish, int yfinish, bool wallNoKnow);
+void poids(labyrinthe *maze, int xFinish, int yfinish, bool wallNoKnow);
 void maze_init (labyrinthe *maze);
 void* calloc_s (size_t nombre, size_t taille);
 void print_maze(const labyrinthe maze, const int x_robot, const int y_robot);

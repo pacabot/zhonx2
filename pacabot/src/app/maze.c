@@ -252,10 +252,10 @@ extern int maze(int i, int str)
 			//arret des moteurs
 			hal_step_motor_disable();
 			hal_os_sleep(2000);
-			coup(&maze,7,7,true);
+			poids(&maze,7,7,true);
 			lengthMini=maze.cell[0][MAZE_SIZE-1].length;
 			clearMazelength(&maze);
-			coup(&maze,7,7,false);
+			poids(&maze,7,7,false);
 			} while(lengthMini !=maze.cell[0][MAZE_SIZE-1].length);
 //	    int length = creat_trajectory(&maze,&positionZhonx, x_finish,y_finish,&way);
 //	    ssd1306ClearScreen();
@@ -335,7 +335,7 @@ extern int maze(int i, int str)
     }
     while (rv > 0);
 
-    return cmd_size + 1
+    return cmd_size + 1;
 #endif
 }
 
@@ -909,7 +909,7 @@ void exploration(labyrinthe *maze, positionRobot* positionZhonx,char xFinish, ch
 			clearMazelength(maze);
 			ssd1306PrintInt(0,0,"lenght=",maze->cell[positionZhonx->x][positionZhonx->y].length,&Font_3x6);
 			new_cell(see_walls(),maze,*positionZhonx);
-			coup(maze,xFinish, yFinish,true);
+			poids(maze,xFinish, yFinish,true);
 			print_maze(*maze,positionZhonx->x,positionZhonx->y);
 			if(maze->cell[positionZhonx->x+1][positionZhonx->y].length+1 == maze->cell[positionZhonx->x][positionZhonx->y].length && positionZhonx->x+1<MAZE_SIZE && maze->cell[positionZhonx->x][positionZhonx->y].wall_east==NO_WALL)
 					{
@@ -1031,45 +1031,45 @@ void new_cell(inputs new_walls, labyrinthe *maze,positionRobot positionZhonx)
 				maze->cell[positionZhonx.x][positionZhonx.y].wall_north=new_walls.front;
 				maze->cell[positionZhonx.x][positionZhonx.y].wall_east=new_walls.right;
 				maze->cell[positionZhonx.x][positionZhonx.y].wall_west=new_walls.left;
-				if(positionZhonx.x>0)
-					maze->cell[positionZhonx.x-1][positionZhonx.y].wall_south=new_walls.front;
-				if(positionZhonx.y<MAZE_SIZE-1)
-					maze->cell[positionZhonx.x][positionZhonx.y+1].wall_west=new_walls.right;
 				if(positionZhonx.y>0)
-					maze->cell[positionZhonx.x][positionZhonx.y-1].wall_east=new_walls.left;
+					maze->cell[positionZhonx.x][positionZhonx.y-1].wall_south=new_walls.front;
+				if(positionZhonx.x<(MAZE_SIZE-1))
+					maze->cell[positionZhonx.x+1][positionZhonx.y].wall_west=new_walls.right;
+				if(positionZhonx.x>0)
+					maze->cell[positionZhonx.x-1][positionZhonx.y].wall_east=new_walls.left;
 				break;
 			case EAST:
 				maze->cell[positionZhonx.x][positionZhonx.y].wall_east=new_walls.front;
 				maze->cell[positionZhonx.x][positionZhonx.y].wall_south=new_walls.right;
 				maze->cell[positionZhonx.x][positionZhonx.y].wall_north=new_walls.left;
-				if(positionZhonx.y<MAZE_SIZE-1)
-					maze->cell[positionZhonx.x][positionZhonx.y+1].wall_west=new_walls.front;
-				if(positionZhonx.x<MAZE_SIZE-1)
-					maze->cell[positionZhonx.x+1][positionZhonx.y].wall_north=new_walls.right;
-				if(positionZhonx.x>0)
-					maze->cell[positionZhonx.x-1][positionZhonx.y].wall_south=new_walls.left;
+				if(positionZhonx.x<(MAZE_SIZE-1))
+					maze->cell[positionZhonx.x+1][positionZhonx.y].wall_west=new_walls.front;
+				if(positionZhonx.y<(MAZE_SIZE-1))
+					maze->cell[positionZhonx.x][positionZhonx.y+1].wall_north=new_walls.right;
+				if(positionZhonx.y>0)
+					maze->cell[positionZhonx.x][positionZhonx.y-1].wall_south=new_walls.left;
 				break;
 			case SOUTH:
 				maze->cell[positionZhonx.x][positionZhonx.y].wall_south=new_walls.front;
 				maze->cell[positionZhonx.x][positionZhonx.y].wall_west=new_walls.right;
 				maze->cell[positionZhonx.x][positionZhonx.y].wall_east=new_walls.left;
-				if(positionZhonx.x<MAZE_MAX_SIZE-1)
-					maze->cell[positionZhonx.x+1][positionZhonx.y].wall_north=new_walls.front;
-				if(positionZhonx.y>0)
-					maze->cell[positionZhonx.x][positionZhonx.y-1].wall_east=new_walls.right;
-				if(positionZhonx.y<MAZE_SIZE-1)
-					maze->cell[positionZhonx.x][positionZhonx.y+1].wall_west=new_walls.left;
+				if(positionZhonx.y<(MAZE_MAX_SIZE-1))
+					maze->cell[positionZhonx.x][positionZhonx.y+1].wall_north=new_walls.front;
+				if(positionZhonx.x>0)
+					maze->cell[positionZhonx.x-1][positionZhonx.y].wall_east=new_walls.right;
+				if(positionZhonx.x<(MAZE_SIZE-1))
+					maze->cell[positionZhonx.x+1][positionZhonx.y].wall_west=new_walls.left;
 				break;
 			case WEST:
 				maze->cell[positionZhonx.x][positionZhonx.y].wall_west=new_walls.front;
-				maze->cell[positionZhonx.x][positionZhonx.y].wall_south=new_walls.right;
-				maze->cell[positionZhonx.x][positionZhonx.y].wall_north=new_walls.left;
-				if(positionZhonx.y>0)
-					maze->cell[positionZhonx.x][positionZhonx.y-1].wall_east=new_walls.front;
-				if(positionZhonx.x<MAZE_SIZE-1)
-					maze->cell[positionZhonx.x+1][positionZhonx.y].wall_north=new_walls.right;
+				maze->cell[positionZhonx.x][positionZhonx.y].wall_north=new_walls.right;
+				maze->cell[positionZhonx.x][positionZhonx.y].wall_south=new_walls.left;
 				if(positionZhonx.x>0)
-					maze->cell[positionZhonx.x-1][positionZhonx.y].wall_south=new_walls.left;
+					maze->cell[positionZhonx.x-1][positionZhonx.y].wall_east=new_walls.front;
+				if(positionZhonx.y>0)
+					maze->cell[positionZhonx.x][positionZhonx.y-1].wall_south=new_walls.right;
+				if(positionZhonx.y>(MAZE_SIZE-1))
+					maze->cell[positionZhonx.x][positionZhonx.y+1].wall_north=new_walls.left;
 				break;
 			}
 #else
@@ -1109,7 +1109,7 @@ void new_cell(inputs new_walls, labyrinthe *maze,positionRobot positionZhonx)
 
 #endif
 	}
-void coup(labyrinthe *maze, int xFinish, int yfinish, bool wallNoKnow)
+void poids(labyrinthe *maze, int xFinish, int yfinish, bool wallNoKnow)
 	{
 	int length=0;
 	int x=xFinish;
