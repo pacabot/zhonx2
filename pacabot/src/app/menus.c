@@ -229,9 +229,11 @@ static const menu_item maze_menu[] =
 {
     {"MAZE MENU",                   null},
     {"New maze",                    maze},
-    {"Trajectory...",               display_trajectory_menu},
-    {"[b]Calibration  :",           null, &zhonx_settings.calibration_enabled},
-    {"Restore maze",                display_restore_maze_menu},
+    {"x finish",					&zhonx_settings.x_finish_maze},
+    {"y finish",					&zhonx_settings.y_finish_maze},
+//    {"Trajectory...",               display_trajectory_menu},
+//    {"[b]Calibration  :",           null, &zhonx_settings.calibration_enabled},
+//    {"Restore maze",                display_restore_maze_menu},
     {null,                          null}
 };
 

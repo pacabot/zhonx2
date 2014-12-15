@@ -5,15 +5,15 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../pacabot/src/app/maze.c \
-../pacabot/src/app/menus.c 
+../pacabot/src/app/menu_colin.c 
 
 OBJS += \
 ./pacabot/src/app/maze.o \
-./pacabot/src/app/menus.o 
+./pacabot/src/app/menu_colin.o 
 
 C_DEPS += \
 ./pacabot/src/app/maze.d \
-./pacabot/src/app/menus.d 
+./pacabot/src/app/menu_colin.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

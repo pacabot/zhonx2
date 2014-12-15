@@ -233,7 +233,7 @@ extern int maze(int i, int str)
 	int x_finish=7, y_finish=7;
 	char way[50];
 	maze_init(&maze);
-	positionRobot positionZhonx= {0,MAZE_SIZE-1,NORTH};
+	positionRobot positionZhonx= {0,0,EAST};
 	print_maze(maze,positionZhonx.x,positionZhonx.y);
 	int lengthMini=-1;
 
@@ -242,21 +242,21 @@ extern int maze(int i, int str)
 
 			// Activation des moteurs
 			hal_step_motor_enable();
-			exploration(&maze, &positionZhonx,8,8);
+			exploration(&maze, &positionZhonx,zhonx_settings.x_finish_maze,zhonx_settings.y_finish_maze);
 			//arret des moteurs
 			hal_step_motor_disable();
 			hal_os_sleep(2000);
 			// Activation des moteurs
 		    hal_step_motor_enable();
-			exploration(&maze, &positionZhonx,0,MAZE_SIZE-1);
+			exploration(&maze, &positionZhonx,0,0);
 			//arret des moteurs
 			hal_step_motor_disable();
 			hal_os_sleep(2000);
-			poids(&maze,7,7,true);
-			lengthMini=maze.cell[0][MAZE_SIZE-1].length;
+			poids(&maze,zhonx_settings.x_finish_maze,zhonx_settings.y_finish_maze,true);
+			lengthMini=maze.cell[0][0].length;
 			clearMazelength(&maze);
 			poids(&maze,7,7,false);
-			} while(lengthMini !=maze.cell[0][MAZE_SIZE-1].length);
+			} while(lengthMini !=maze.cell[0][0].length);
 //	    int length = creat_trajectory(&maze,&positionZhonx, x_finish,y_finish,&way);
 //	    ssd1306ClearScreen();
 //	    ssd1306PrintInt(10,10,"distance chemin : ", length, Font_3x6);
@@ -933,66 +933,12 @@ void exploration(labyrinthe *maze, positionRobot* positionZhonx,char xFinish, ch
 					}
 			else
 			{
-
-				inputs newwall=see_walls();
-				step_motors_rotate_in_place(360);
-				ssd1306ClearScreen();
-				if (newwall.front==WALL_KNOW)
-					ssd1306DrawRect(0,0,60,5);
-				if (newwall.left==WALL_KNOW)
-					ssd1306DrawRect(0,0,5,60);
-				if (newwall.right==WALL_KNOW)
-					ssd1306DrawRect(60,0,5,60);
-				ssd1306Refresh();
 				hal_step_motor_disable();
-				wait_validation(100000);
-				print_maze(*maze,positionZhonx->x,positionZhonx->y);
-				wait_validation(100000);
-				ssd1306ClearScreen();
-				ssd1306PrintInt(30,0,"n",maze->cell[positionZhonx->x][positionZhonx->y-1].length,&Font_3x6);
-				ssd1306PrintInt(0,30,"w",maze->cell[positionZhonx->x-1][positionZhonx->y].length,&Font_3x6);
-				ssd1306PrintInt(30,30,"m",maze->cell[positionZhonx->x][positionZhonx->y].length,&Font_3x6);
-				ssd1306PrintInt(60,30,"e",maze->cell[positionZhonx->x+1][positionZhonx->y].length,&Font_3x6);
-				ssd1306PrintInt(30,60,"s",maze->cell[positionZhonx->x][positionZhonx->y+1].length,&Font_3x6);
-				switch(positionZhonx->orientation)
-				{
-					case NORTH:
-						hal_ui_display_txt(app_context.ui,100,30,"^");
-						break;
-					case EAST:
-						hal_ui_display_txt(app_context.ui,100,30,"<");
-						break;
-					case WEST:
-						hal_ui_display_txt(app_context.ui,100,30,">");
-						break;
-					case SOUTH:
-						hal_ui_display_txt(app_context.ui,100,30,"v");
-						break;
-				}
-				//ssd1306DrawString(10,10,"text",Font_3x6);
-				hal_ui_display_txt(null,104,30,"north");
-//				ssd1306DrawString(104,30,"north",Font_3x6);
-				ssd1306Refresh();
-				wait_validation(100000);
 				hal_ui_clear_scr(app_context.ui);
-				if (maze->cell[positionZhonx->x][positionZhonx->y].wall_north==WALL_KNOW)
-									ssd1306DrawRect(10,10,40,5);
-				if (maze->cell[positionZhonx->x][positionZhonx->y-1].wall_south==WALL_KNOW && positionZhonx->y>0)
-									ssd1306DrawRect(10,0,40,5);
-				if (maze->cell[positionZhonx->x][positionZhonx->y].wall_east==WALL_KNOW)
-									ssd1306DrawRect(40,10,5,60);
-				if (maze->cell[positionZhonx->x+1][positionZhonx->y].wall_west==WALL_KNOW && positionZhonx->x<MAZE_SIZE-1)
-									ssd1306DrawRect(50,10,5,40);
-				if (maze->cell[positionZhonx->x][positionZhonx->y].wall_south==WALL_KNOW)
-									ssd1306DrawRect(10,40,40,5);
-				if (maze->cell[positionZhonx->x][positionZhonx->y+1].wall_north==WALL_KNOW && positionZhonx->y<MAZE_SIZE-1)
-									ssd1306DrawRect(10,50,40,5);
-				if (maze->cell[positionZhonx->x][positionZhonx->y].wall_west==WALL_KNOW)
-									ssd1306DrawRect(10,10,5,40);
-				if (maze->cell[positionZhonx->x-1][positionZhonx->y].wall_east==WALL_KNOW && positionZhonx->x>0)
-									ssd1306DrawRect(50,10,5,40);
-				ssd1306Refresh();
+				hal_ui_display_txt(app_context.ui,0,0,"no solution\nfor the maze");
+				hal_ui_refresh(app_context.ui);
 				wait_validation(100000);
+				return;
 				hal_step_motor_enable();
 			}
 			}
