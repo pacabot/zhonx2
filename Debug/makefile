@@ -72,7 +72,7 @@ all: zhonxII.elf secondary-outputs
 zhonxII.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross ARM C Linker'
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mlittle-endian -mfloat-abi=hard -mfpu=fpv4-sp-d16 -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -g3 -T "/home/colin/workspace_eclipse_arm/zhonxII/STM32F405RG_FLASH.ld" -Xlinker --gc-sections -Wl,-Map,"zhonxII.map" -Wl,-cref,-u,Reset_Handler -o "zhonxII.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mlittle-endian -mfloat-abi=hard -mfpu=fpv4-sp-d16 -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -g3 -T "/home/zhonx/workspace_eclipse_arm/zhonxII/STM32F405RG_FLASH.ld" -Xlinker --gc-sections -Wl,-Map,"zhonxII.map" -Wl,-cref,-u,Reset_Handler -o "zhonxII.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

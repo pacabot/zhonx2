@@ -69,6 +69,8 @@ int hal_ui_modify_bool_param(HAL_UI_HANDLE handle,
                              char *param_name, unsigned char *param);
 int hal_ui_modify_long_param(HAL_UI_HANDLE handle, char *param_name,
                              unsigned long *param, int step);
+int hal_ui_modify_int_param(HAL_UI_HANDLE handle, char *param_name,
+                             unsigned int *param, int step);
 int hal_ui_draw_line(HAL_UI_HANDLE handle,
                      unsigned char x0, unsigned char y0,
                      unsigned char x1, unsigned char y1);

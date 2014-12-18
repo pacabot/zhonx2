@@ -62,8 +62,7 @@ typedef struct
     int y;
     int orientation;
 } positionRobot;
-
-void solver_maze();
+int maze(int i, int str);
 void exploration(labyrinthe *maze, positionRobot* poitionZhonx,char xFinish, char yFinish);
 void move_zhonx (int direction_to_go, int *direction_robot);
 void new_cell(inputs new_walls, labyrinthe *maze, positionRobot positionZhonx);

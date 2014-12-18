@@ -707,6 +707,68 @@ int hal_ui_modify_long_param(HAL_UI_HANDLE handle, char *param_name,
     return HAL_UI_E_SUCCESS;
 }
 
+int hal_ui_modify_int_param(HAL_UI_HANDLE handle, char *param_name,
+                             unsigned int *param, int step)
+{
+    char str[40];
+    unsigned int param_copy = *param;
+
+    hal_ui_clear_scr(handle);
+
+    // Write the parameter name
+    ssd1306DrawString(0, 0,
+                      touppercase(param_name, strlen(param_name)), &Font_3x6);
+    ssd1306DrawLine(0, 10, 128, 10);
+
+    sprintf(str, "%i", (int)param_copy);
+    ssd1306DrawString(0, 28, str, &Font_8x8);
+    ssd1306DrawString(0, 50, "PRESS 'RIGHT' TO VALIDATE", &Font_3x6);
+    ssd1306DrawString(0, 57, "      'LEFT'  TO RETURN.", &Font_3x6);
+    ssd1306Refresh();
+
+    while (1)
+    {
+        // Exit Button
+        if (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET)
+        {
+            // Wait until button is released
+            while (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET);
+            hal_os_sleep(VALIDATE_WAIT_TIME);
+            break;
+        }
+        else if (GPIO_ReadInputDataBit(JOYSTICK_UP) == Bit_RESET)
+        {
+            param_copy += step;
+            ssd1306ClearRect(0, 28, 164, 8);
+            sprintf(str, "%i", (int)param_copy);
+            ssd1306DrawString(0, 28, str, &Font_8x8);
+            ssd1306Refresh();
+            hal_os_sleep(100);
+        }
+        else if (GPIO_ReadInputDataBit(JOYSTICK_DOWN) == Bit_RESET)
+        {
+            param_copy -= step;
+            ssd1306ClearRect(0, 28, 164, 8);
+            sprintf(str, "%i", (int)param_copy);
+            ssd1306DrawString(0, 28, str, &Font_8x8);
+            ssd1306Refresh();
+            hal_os_sleep(100);
+        }
+        else if (GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET)
+        {
+            // Wait until button is released
+            while (GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET);
+            hal_os_sleep(VALIDATE_WAIT_TIME);
+
+            *param = param_copy;
+            hal_ui_clear_scr(handle);
+            ssd1306Refresh();
+            break;
+        }
+    }
+
+    return HAL_UI_E_SUCCESS;
+}
 
 int hal_ui_draw_line(HAL_UI_HANDLE handle,
                      unsigned char x0, unsigned char y0,

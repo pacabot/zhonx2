@@ -52,7 +52,8 @@ int main(void)
 
     //rv = test_maze_trajectoire();
     //rv = display_main_menu();
-    rv=menu_colin(menu_c);
+    while(1)
+    	rv=menu_colin(menu_c);
     //rv = test_hal_beeper();
     //rv = test_hal_step_motor();
     //rv = test_hal_beeper();
