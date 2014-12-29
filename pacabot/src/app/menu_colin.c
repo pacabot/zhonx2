@@ -32,7 +32,7 @@
 #include "oled/arrows_bmp.h"
 #include "oled/ssd1306.h"
 #include "oled/smallfonts.h"
-#include "app/solver_maze.h"
+//#include "app/solver_maze.h"
 
 #define JOYSTICK_LEFT       GPIOC, GPIO_Pin_8
 #define JOYSTICK_UP         GPIOC, GPIO_Pin_9
@@ -70,11 +70,11 @@ menuItem maze_menu =
 {
 		"maze menu",
 		{
-				{"New maze",'f',			&maze},
-				{"x finish",'l',			&zhonx_settings.x_finish_maze},
-				{"y finish",'l',			&zhonx_settings.y_finish_maze},
-				{"color finish",'b',		&zhonx_settings.color_sensor_enabled},
-				{"calibration enabled",'b',	&zhonx_settings.calibration_enabled}
+				{"New maze",'f',			(void*)&maze},
+				{"x finish",'i',			(void*)&zhonx_settings.x_finish_maze},
+				{"y finish",'i',			(void*)&zhonx_settings.y_finish_maze},
+				{"color finish",'b',		(void*)&zhonx_settings.color_sensor_enabled},
+				{"calib. enabled",'b',		(void*)&zhonx_settings.calibration_enabled}
 //				{"Trajectory...",'f',		&trajectory_menu},
 //				{"Restore maze",            &restore_maze_menu}
 		}
@@ -94,20 +94,24 @@ menuItem motion_settings =
 {
     "MOTION SETTINGS",
     {
-		{"Initial speed :",'l',			&zhonx_settings.initial_speed},
-		{"Max speed dist:",'l',			&zhonx_settings.max_speed_distance},
-		{"Default accel :",'l',			&zhonx_settings.default_accel},
-		{"Rotate accel  :",'l',			&zhonx_settings.rotate_accel},
-		{"Emerg decel   :",'l',			&zhonx_settings.emergency_decel}
+		{"Initial speed :",'l',			(void*)&zhonx_settings.initial_speed},
+		{"Max speed dist:",'l',			(void*)&zhonx_settings.max_speed_distance},
+		{"Default accel :",'l',			(void*)&zhonx_settings.default_accel},
+		{"Rotate accel  :",'l',			(void*)&zhonx_settings.rotate_accel},
+		{"Emerg decel   :",'l',			(void*)&zhonx_settings.emergency_decel},
+		{"test1",'f',null},
+		{"test2",'f',null},
+		{"test3",'f',null},
+		{"test4",'f',null}
     }
 };
 menuItem PID_settings =
 {
     "PID SETTINGS",
     {
-		{"Proportional  :",'l',			&zhonx_settings.correction_p},
-		{"Integral      :",'l',			&zhonx_settings.correction_i},
-		{"Max correction:",'l',			&zhonx_settings.max_correction},
+		{"Proportional  :",'l',			(void*)&zhonx_settings.correction_p},
+		{"Integral      :",'l',			(void*)&zhonx_settings.correction_i},
+		{"Max correction:",'l',			(void*)&zhonx_settings.max_correction},
 		{NULL,			NULL,			NULL}
     }
 };
@@ -115,10 +119,10 @@ menuItem sensor_settings =
 {
     "COLOR SENSOR SETTINGS",
     {
-		{"[b]Enabled?      :",'b',		&zhonx_settings.color_sensor_enabled},
+		{"Enabled?      :",'b',			(void*)&zhonx_settings.color_sensor_enabled},
 		{"Calibrate color",'f',			sensor_calibrate},
-		{"Threshold val :",'l',			&zhonx_settings.threshold_color},
-		{"End Greater?  :",'b',			&zhonx_settings.threshold_greater},
+		{"Threshold val :",'l',			(void*)&zhonx_settings.threshold_color},
+		{"End Greater?  :",'b',			(void*)&zhonx_settings.threshold_greater},
 		{NULL,			NULL,			NULL}
     }
 };
@@ -126,25 +130,12 @@ menuItem paramters_menu=
 {
 		"parameters menu",
 		{
-			{"Motion settings",'m',			&motion_settings},
-			{"PID settings",'m',			&PID_settings},
-			{"Sensor settings",'m',			&sensor_settings},
+			{"Motion settings",'m',			(void*)&motion_settings},
+			{"PID settings",'m',			(void*)&PID_settings},
+			{"Sensor settings",'m',			(void*)&sensor_settings},
 			{NULL,			NULL,			NULL}
 //			{"Save settings",'m',			&save_settings},
 //			{"Restore settings",'m',		&restore_settings}
-		}
-};
-menuItem tests_menu=
-{
-		"test menu",
-		{
-				{"Test ADC",'f',				test_hal_adc},
-				{"Test beeper",'f',				test_hal_beeper},
-//				{"Test OLED",'m',				&oled_menu},
-				{"Test motor",'m',				&motor_menu},
-				{"Test sensor",'f',				test_hal_sensor},
-				{"Test color sensor",'f',		test_hal_color_sensor},
-				{NULL,			NULL,			NULL}
 		}
 };
 static const menuItem oled_menu =
@@ -157,14 +148,27 @@ static const menuItem oled_menu =
 		{NULL,			NULL,			NULL}
     }
 };
+menuItem tests_menu=
+{
+		"test menu",
+		{
+				{"Test ADC",'f',				test_hal_adc},
+				{"Test beeper",'f',				test_hal_beeper},
+				{"Test OLED",'m',				(void*)&oled_menu},
+				{"Test motor",'m',				(void*)&motor_menu},
+				{"Test sensor",'f',				test_hal_sensor},
+				{"Test color sensor",'f',		test_hal_color_sensor},
+				{NULL,			NULL,			NULL}
+		}
+};
 menuItem menu_c =
 {
 		"ZHONX II                 V2.0",
 		{
-			{"Maze menu",'m',			&maze_menu },
-			{"prameters",'m',			&paramters_menu},
-			{"test menu",'m',			&tests_menu},
-			{"beeper enabled?",'b',		&zhonx_settings.beeper_enabled},
+			{"Maze menu",'m',			(void*)&maze_menu },
+			{"prameters",'m',			(void*)&paramters_menu},
+			{"test menu",'m',			(void*)&tests_menu},
+			{"beeper enabled?",'b',		(void*)&zhonx_settings.beeper_enabled},
 			{NULL,			NULL,			NULL}
 		}
 };
@@ -173,7 +177,7 @@ int menu_colin(menuItem menu)
 	signed char line_screen=1;
 	signed char line_menu=0;
 	affiche_menu(menu,line_menu);
-	ssd1306InvertArea(0, 10, 128, 10);
+	ssd1306InvertArea(0, 10, 120, 10);
 	hal_ui_refresh(app_context.ui);
 	while (true)
 	{
@@ -198,12 +202,12 @@ int menu_colin(menuItem menu)
 				{
 					line_screen--;
 					affiche_menu(menu,line_menu-(line_screen-1));
-					ssd1306InvertArea(0, line_screen*10, 128, 10);
+					ssd1306InvertArea(0, line_screen*10, 120, 10);
 					hal_ui_refresh(app_context.ui);
 				}
 				else
 				{
-					menu_animate((line_screen-1)*10+1, (line_screen)*10-1);
+					menu_animate((line_screen-1)*10+1, (line_screen)*10);
 				}
 			}
 		}
@@ -218,7 +222,7 @@ int menu_colin(menuItem menu)
 				{
 					line_menu--;
 					affiche_menu(menu,line_menu);
-					ssd1306InvertArea(0, 10, 128, 10);
+					ssd1306InvertArea(0, 10, 120, 10);
 					hal_ui_refresh(app_context.ui);
 				}
 			}
@@ -246,19 +250,20 @@ int menu_colin(menuItem menu)
 					hal_ui_modify_int_param(app_context.ui,menu.line[line_menu].name,(int*)menu.line[line_menu].param,1);
 					break;
 				case 'l':
-					hal_ui_modify_long_param(app_context.ui,menu.line[line_menu].name,menu.line[line_menu].param,1);
+					hal_ui_modify_long_param(app_context.ui,menu.line[line_menu].name,(long*)menu.line[line_menu].param,1);
 					break;
 				case 'm':
 					menu_colin(*(menuItem*)menu.line[line_menu].param);
 					break;
 				case 'f':
-					(void*)menu.line[line_menu].param();
+					if (menu.line[line_menu].param!=null)
+						menu.line[line_menu].param();
 					break;
 				default:
 					break;
 			}
 			affiche_menu(menu,line_menu-(line_screen-1));
-			ssd1306InvertArea(0,10*line_screen,168,10);
+			ssd1306InvertArea(0,10*line_screen,120,10);
 			hal_ui_refresh(app_context.ui);
 		}
 	}
@@ -273,17 +278,17 @@ void anti_rebonds (GPIO_TypeDef* gpio, uint16_t gpio_pin)
 			time_base = hal_os_get_systicks();
 	}while (time_base!=(hal_os_get_systicks()-200));
 }
-void menu_animate(unsigned char y_, unsigned char max_y_)
+void menu_animate(unsigned char y, unsigned char max_y)
 {
-	unsigned char y=y_;
-	unsigned char max_y=max_y_;
+//	unsigned char y=y_;
+//	unsigned char max_y=max_y_;
 
     if (max_y > y)
     {
         for ( ; y <= max_y; y++)
         {
-            ssd1306InvertArea(0, y - 1, 128, 10);
-            ssd1306InvertArea(0, y, 128, 10);
+            ssd1306InvertArea(0, y - 1, 120, 10);
+            ssd1306InvertArea(0, y, 120, 10);
             ssd1306Refresh();
             hal_os_sleep(10);
         }
@@ -292,8 +297,8 @@ void menu_animate(unsigned char y_, unsigned char max_y_)
     {
         for ( ; y >= max_y; y--)
         {
-            ssd1306InvertArea(0, y + 1, 128, 10);
-            ssd1306InvertArea(0, y, 128, 10);
+            ssd1306InvertArea(0, y + 1, 120, 10);
+            ssd1306InvertArea(0, y, 120, 10);
             ssd1306Refresh();
             hal_os_sleep(10);
         }
@@ -306,26 +311,36 @@ void affiche_menu(menuItem menu,int line)
 	for (int i=0;i<MAX_LINE_SCREEN;i++)
 	{
 		if(menu.line[i].name!=null)
-			hal_ui_display_txt(app_context.ui,0,10*i+10,menu.line[line].name);
-			switch (menu.line[line].type)
+			hal_ui_display_txt(app_context.ui,0,10*i+10,menu.line[line+i].name);
+			switch (menu.line[line+i].type)
 			{
 				case 'b':
-					if(*((bool*)menu.line[line].param)==true)
-						hal_ui_display_txt(app_context.ui,100,10*i+10,"yes");
+					if(*((bool*)menu.line[i+line].param)==true)
+						hal_ui_display_txt(app_context.ui,90,10*i+10,"yes");
 					else
-						hal_ui_display_txt(app_context.ui,100,10*i+10,"no");
+						hal_ui_display_txt(app_context.ui,90,10*i+10,"no");
 					break;
 				case 'i':
-					ssd1306PrintInt(100,10*i+10," ",*((unsigned int*)menu.line[line].param),&Font_3x6);
+					ssd1306PrintInt(90,10*i+10," ",*((unsigned int*)menu.line[i+line].param),&Font_3x6);
 					break;
 				case 'l':
-					ssd1306PrintInt(100,10*i+10," ",*((unsigned long*)menu.line[line].param),&Font_3x6);
+					ssd1306PrintInt(90,10*i+10," ",*((unsigned long*)menu.line[i+line].param),&Font_3x6);
 					break;
 				case 'f':
 				case 'm':
-					hal_ui_display_txt(app_context.ui,117,i*10+10,">");
+					hal_ui_display_txt(app_context.ui,115,i*10+10,">");
 					break;
 			}
-		line ++;
+	}
+	char nmbr_item=0;
+	while(menu.line[nmbr_item].name!=null)
+	{
+		nmbr_item++;
+	}
+	if (nmbr_item>MAX_LINE_SCREEN)
+	{
+		int heightOneItem=54/nmbr_item;
+		hal_ui_fill_rect(app_context.ui,123,heightOneItem*line+10,3,MAX_LINE_SCREEN*heightOneItem);
+		hal_ui_refresh(app_context.ui);
 	}
 }

@@ -109,8 +109,8 @@ typedef struct
     unsigned char   beeper_enabled;
     unsigned long   threshold_color;
     unsigned char   threshold_greater;
-    unsigned char	x_finish_maze;
-    unsigned char	y_finish_maze;
+    unsigned int	x_finish_maze;
+    unsigned int	y_finish_maze;
 }
 robot_settings;
 

@@ -27,7 +27,7 @@
 
 #include <stdlib.h>
 
-
+//Structures typedef
 typedef struct
 {
   char wall_north;
@@ -53,8 +53,8 @@ typedef struct coordinate
 {
   int x;
   int y;
-  void *next;
-  void *previous;
+  struct coordinate *next;
+  struct coordinate *previous;
 }coordinate;
 typedef struct
 {
@@ -62,9 +62,13 @@ typedef struct
     int y;
     int orientation;
 } positionRobot;
+
+
+// fonctions
 int maze(int i, int str);
 void exploration(labyrinthe *maze, positionRobot* poitionZhonx,char xFinish, char yFinish);
-void move_zhonx (int direction_to_go, int *direction_robot);
+void moveVirtualZhonx(labyrinthe maze, positionRobot positionZhonxVirtuel,coordinate *way, char xFinish, char yFinish);
+void move_zhonx (int direction_to_go, int *direction_robot, int numberOfCase);
 void new_cell(inputs new_walls, labyrinthe *maze, positionRobot positionZhonx);
 coordinate* new_dot(coordinate *old_dot,int x,int y, int length, labyrinthe *maze);
 void poids(labyrinthe *maze, int xFinish, int yfinish, bool wallNoKnow);
@@ -75,5 +79,8 @@ void print_length(const labyrinthe maze);
 void clearMazelength(labyrinthe* maze);
 inputs see_walls ();
 void commande(int dir, int dist);
+bool mini_way_find(labyrinthe *maze, int x_finish, int y_finish);
 void trajectoire1(char *Tab, int taille);
+void moveRealZhonx(labyrinthe *maze, positionRobot *positionZhonx, coordinate *way);
+
 #endif /* RESOLUTION_MAZE_H_ */
