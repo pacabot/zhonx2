@@ -241,8 +241,9 @@ extern int maze(int i, int str)
 			hal_os_sleep(2000);
 			exploration(&maze, &positionZhonx,0,0);
 			hal_os_sleep(2000);
+
 			} while(mini_way_find(&maze, zhonx_settings.x_finish_maze, zhonx_settings.y_finish_maze));
-	    exploration(&maze, &positionZhonx,zhonx_settings.x_finish_maze,zhonx_settings.y_finish_maze);
+	    //exploration(&maze, &positionZhonx,zhonx_settings.x_finish_maze,zhonx_settings.y_finish_maze);
 		hal_os_sleep(2000);
 		exploration(&maze, &positionZhonx,0,0);
 //	    ssd1306ClearScreen();
@@ -947,6 +948,7 @@ void moveRealZhonx(labyrinthe *maze, positionRobot *positionZhonx, coordinate *w
 	coordinate *oldDote;
 	int length;
 	hal_step_motor_enable();
+//	step_motors_move(CELL_LENGTH/2, 0, CHAIN_LEFT|CHAIN_RIGHT);
 	while(way!=null)
 	{
 		length=0;
@@ -1027,28 +1029,32 @@ void move_zhonx (int direction_to_go, int *direction_robot, int numberOfCase)
 	{
 		case FORWARD :
 				hal_beeper_beep(app_context.beeper,440,300);
-				step_motors_move(CELL_LENGTH*numberOfCase, 0, 0);
+		//		step_motors_move(CELL_LENGTH*numberOfCase, 0, CHAIN_LEFT|CHAIN_RIGHT);
+
 			break;
 		case RIGHT :
 				hal_beeper_beep(app_context.beeper,494,300);
 				step_motors_rotate_in_place(-90);
-				step_motors_move(CELL_LENGTH*numberOfCase, 0, 0);
+		//		step_motors_rotate(-90.0, CELL_LENGTH/2, CHAIN_LEFT|CHAIN_RIGHT);
 			break;
 		case RETURN :
 				hal_beeper_beep(app_context.beeper,440,300);
 				hal_beeper_beep(app_context.beeper,494,300);
 				hal_beeper_beep(app_context.beeper,262,300);
+			//	step_motors_rotate(180, CELL_LENGTH/2, CHAIN_LEFT|CHAIN_RIGHT);
 				step_motors_rotate_in_place(180);
-				step_motors_move(CELL_LENGTH*numberOfCase, 0, 0);
+
 			break;
 		case LEFT :
 				hal_beeper_beep(app_context.beeper,262,300);
+		//		step_motors_rotate(90.0, CELL_LENGTH/2, CHAIN_LEFT|CHAIN_RIGHT);
 				step_motors_rotate_in_place(90);
-				step_motors_move(CELL_LENGTH*numberOfCase, 0, 0);
+
 
 			break;
 
 	}
+	step_motors_move(CELL_LENGTH*numberOfCase, 0, 0);
 }
 void new_cell(inputs new_walls, labyrinthe *maze,positionRobot positionZhonx)
 	{
