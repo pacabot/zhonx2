@@ -70,7 +70,7 @@ void exploration(labyrinthe *maze, positionRobot* poitionZhonx,char xFinish, cha
 void moveVirtualZhonx(labyrinthe maze, positionRobot positionZhonxVirtuel,coordinate *way, char xFinish, char yFinish);
 void move_zhonx (int direction_to_go, int *direction_robot, int numberOfCase);
 void new_cell(inputs new_walls, labyrinthe *maze, positionRobot positionZhonx);
-coordinate* new_dot(coordinate *old_dot,int x,int y, int length, labyrinthe *maze);
+void new_dot(coordinate **old_dot,int x,int y);
 void poids(labyrinthe *maze, int xFinish, int yfinish, bool wallNoKnow);
 void maze_init (labyrinthe *maze);
 void* calloc_s (size_t nombre, size_t taille);
@@ -82,5 +82,8 @@ void commande(int dir, int dist);
 bool mini_way_find(labyrinthe *maze, int x_finish, int y_finish);
 void trajectoire1(char *Tab, int taille);
 void moveRealZhonx(labyrinthe *maze, positionRobot *positionZhonx, coordinate *way);
+void run (labyrinthe *maze,positionRobot *positionZhonx, int xFinish, int yFinish);
+void moveRealZhonxArc(labyrinthe *maze, positionRobot *positionZhonx, coordinate *way);
+void move_zhonx_arc (int direction_to_go, int *direction_robot, int numberOfCase);
 
 #endif /* RESOLUTION_MAZE_H_ */

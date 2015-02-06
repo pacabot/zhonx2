@@ -12,6 +12,7 @@
 #include "config/config.h"
 #include "config/basetypes.h"
 #include "config/errors.h"
+#include "stm32f4xx_gpio.h"
 
 #include "hal/hal_os.h"
 #include "hal/hal_adc.h"
@@ -31,7 +32,6 @@
 #include "app/app_def.h"
 #include "app/menus.h"
 
-#include "stm32f4xx_gpio.h"
 #include "stm32f4xx.h"
 #define SOLVER_COLIN
 
@@ -129,9 +129,7 @@ static int wait_validation(unsigned long timeout)
             hal_os_sleep(200);
             return -2;
         }
-    }
-    while (timeout > hal_os_get_systicks());
-
+    } while (timeout > hal_os_get_systicks());
     return -1;
 }
 
@@ -245,6 +243,7 @@ extern int maze(int i, int str)
 	    exploration(&maze, &positionZhonx,zhonx_settings.x_finish_maze,zhonx_settings.y_finish_maze);
 		hal_os_sleep(2000);
 		exploration(&maze, &positionZhonx,0,0);
+//		run(&maze,&positionZhonx,zhonx_settings.x_finish_maze, zhonx_settings.y_finish_maze);
 //	    ssd1306ClearScreen();
 //	    ssd1306PrintInt(10,10,"distance chemin : ", length, Font_3x6);
 //	    ssd1306Refresh();
@@ -890,22 +889,28 @@ static unsigned char get_abs_position(int angle)
 
 
 void exploration(labyrinthe *maze, positionRobot* positionZhonx,char xFinish, char yFinish)
-	{
+{
 	coordinate way={0,0,0};
-		new_cell(see_walls(),maze,*positionZhonx);
-		while(positionZhonx->x!=xFinish || positionZhonx->y!=yFinish)
-		{
-			moveVirtualZhonx(*maze,*positionZhonx,&way,xFinish, yFinish);
-			moveRealZhonx(maze,positionZhonx,way.next);
-		}
+	hal_step_motor_enable();
+	new_cell(see_walls(),maze,*positionZhonx);
+
+	while(positionZhonx->x!=xFinish || positionZhonx->y!=yFinish)
+	{
+		clearMazelength(maze);
+		poids(maze,xFinish, yFinish,true);
+		moveVirtualZhonx(*maze,*positionZhonx,&way,xFinish, yFinish);
+		moveRealZhonx(maze,positionZhonx,way.next);
 	}
+
+	hal_os_sleep(200);
+	//step_motors_move(CELL_LENGTH/2, 0, 0);
+	hal_step_motor_disable();
+}
 
 void moveVirtualZhonx(labyrinthe maze, positionRobot positionZhonxVirtuel,coordinate *way, char xFinish, char yFinish)
 {
 	while(positionZhonxVirtuel.x!=xFinish || positionZhonxVirtuel.y!=yFinish)
 			{
-			clearMazelength(&maze);
-			poids(&maze,xFinish, yFinish,true);
 			print_maze(maze,positionZhonxVirtuel.x,positionZhonxVirtuel.y);
 			if(maze.cell[positionZhonxVirtuel.x+1][positionZhonxVirtuel.y].length+1 == maze.cell[positionZhonxVirtuel.x][positionZhonxVirtuel.y].length && positionZhonxVirtuel.x+1<MAZE_SIZE && maze.cell[positionZhonxVirtuel.x][positionZhonxVirtuel.y].wall_east==NO_WALL)
 				{
@@ -930,81 +935,147 @@ void moveVirtualZhonx(labyrinthe maze, positionRobot positionZhonxVirtuel,coordi
 					else
 					{
 						int boucle=true;
+						hal_ui_clear_scr(app_context.ui);
+						hal_ui_display_txt(app_context.ui,0,0,"no solution");
+						hal_ui_refresh(app_context.ui);
+						hal_step_motor_disable();
 						while (boucle)
 						{
-							hal_ui_clear_scr(app_context.ui);
-							hal_ui_display_txt(app_context.ui,0,0,"no solution");
-							hal_ui_refresh(app_context.ui);
 						}
 					}
 				}
-			way=new_dot(way,positionZhonxVirtuel.x,positionZhonxVirtuel.y,maze.cell[positionZhonxVirtuel.x][positionZhonxVirtuel.y].length,&maze);
+			new_dot(&way,positionZhonxVirtuel.x,positionZhonxVirtuel.y);
 			}
 	return;
 }
+void run (labyrinthe *maze,positionRobot *positionZhonx, int xFinish, int yFinish)
+{
+	coordinate way={0,0,0};
+	clearMazelength(maze);
+	poids(maze,xFinish,yFinish,false);
+	moveVirtualZhonx(*maze,*positionZhonx,&way,xFinish,yFinish);
+	hal_step_motor_enable();
+	step_motors_move(CELL_LENGTH/2,0,0);
+	moveRealZhonxArc(maze,positionZhonx,way.next);
+	hal_step_motor_disable();
+	hal_os_sleep(2000);
+	clearMazelength(maze);
+	poids(maze,0,0,false);
+	moveVirtualZhonx(*maze,*positionZhonx,way.next,0,0);
+	hal_step_motor_enable();
+	moveRealZhonxArc(maze,positionZhonx,way.next);
+	step_motors_move(CELL_LENGTH/2,0,0);
+	hal_step_motor_disable();
+}
+//void moveRealZhonx(labyrinthe *maze, positionRobot *positionZhonx, coordinate *way)
+//{
+//	coordinate *oldDote;
+//	int length;
+//	while(way!=null)
+//	{
+//		length=0;
+//		if(way->x==(positionZhonx->x+1) && way->y==positionZhonx->y)
+//		{
+//			while(way->x==(positionZhonx->x+1) && way->y==positionZhonx->y)
+//			{
+//				length++;
+//				positionZhonx->x=way->x;
+//				positionZhonx->y=way->y;
+//				oldDote=way;
+//				way=way->next;
+//				free(oldDote);
+//			}
+//			move_zhonx(EAST,&positionZhonx->orientation,length);
+//			new_cell(see_walls(),maze,*positionZhonx);
+//		}
+//		else if(way->x==(positionZhonx->x-1) && way->y==positionZhonx->y)
+//		{
+//			while(way->x==(positionZhonx->x-1) && way->y==positionZhonx->y)
+//			{
+//				length++;
+//				positionZhonx->x=way->x;
+//				positionZhonx->y=way->y;
+//				oldDote=way;
+//				way=way->next;
+//				free(oldDote);
+//			}
+//			move_zhonx(WEST,&positionZhonx->orientation,length);
+//			new_cell(see_walls(),maze,*positionZhonx);
+//		}
+//		else if(way->y==(positionZhonx->y-1) && way->x==positionZhonx->x)
+//		{
+//			while(way->y==(positionZhonx->y-1) && way->x==positionZhonx->x)
+//			{
+//				length++;
+//				positionZhonx->x=way->x;
+//				positionZhonx->y=way->y;
+//				oldDote=way;
+//				way=way->next;
+//				free(oldDote);
+//			}
+//			move_zhonx(NORTH,&positionZhonx->orientation,length);
+//			new_cell(see_walls(),maze,*positionZhonx);
+//		}
+//		else if(way->y==(positionZhonx->y+1) && way->x==positionZhonx->x)
+//		{
+//			while(way->y==(positionZhonx->y+1) && way->x==positionZhonx->x)
+//			{
+//				length++;
+//				positionZhonx->x=way->x;
+//				positionZhonx->y=way->y;
+//				oldDote=way;
+//				way=way->next;
+//				free(oldDote);
+//			}
+//			move_zhonx(SOUTH,&positionZhonx->orientation,length);
+//			new_cell(see_walls(),maze,*positionZhonx);
+//		}
+//		else
+//		{
+//			hal_os_sleep(200);
+//			hal_step_motor_disable();
+//			hal_ui_clear_scr(app_context.ui);
+//			hal_ui_display_txt(app_context.ui,0,0,"Error way");
+//			hal_ui_refresh(app_context.ui);
+//			while(wait_validation(10000)==-1);
+//		}
+//	}
+//}
 void moveRealZhonx(labyrinthe *maze, positionRobot *positionZhonx, coordinate *way)
 {
 	coordinate *oldDote;
 	int length;
-	hal_step_motor_enable();
+	char additionY=0;
+	char additionX=0;
+	char orientaionToGo=NORTH;
 	while(way!=null)
 	{
 		length=0;
 		if(way->x==(positionZhonx->x+1) && way->y==positionZhonx->y)
 		{
-			while(way->x==(positionZhonx->x+1) && way->y==positionZhonx->y)
-			{
-				length++;
-				positionZhonx->x=way->x;
-				positionZhonx->y=way->y;
-				oldDote=way;
-				way=way->next;
-				free(oldDote);
-			}
-			move_zhonx(EAST,&positionZhonx->orientation,length);
-			new_cell(see_walls(),maze,*positionZhonx);
+			additionX=1;
+			additionY=0;
+			orientaionToGo=EAST;
 		}
 		else if(way->x==(positionZhonx->x-1) && way->y==positionZhonx->y)
 		{
-			while(way->x==(positionZhonx->x-1) && way->y==positionZhonx->y)
-			{
-				length++;
-				positionZhonx->x=way->x;
-				positionZhonx->y=way->y;
-				oldDote=way;
-				way=way->next;
-				free(oldDote);
-			}
-			move_zhonx(WEST,&positionZhonx->orientation,length);
-			new_cell(see_walls(),maze,*positionZhonx);
+			additionX=-1;
+			additionY=0;
+			orientaionToGo=WEST;
 		}
 		else if(way->y==(positionZhonx->y-1) && way->x==positionZhonx->x)
 		{
-			while(way->y==(positionZhonx->y-1) && way->x==positionZhonx->x)
-			{
-				length++;
-				positionZhonx->x=way->x;
-				positionZhonx->y=way->y;
-				oldDote=way;
-				way=way->next;
-				free(oldDote);
-			}
-			move_zhonx(NORTH,&positionZhonx->orientation,length);
-			new_cell(see_walls(),maze,*positionZhonx);
+
+			additionX=0;
+			additionY=-1;
+			orientaionToGo=NORTH;
 		}
 		else if(way->y==(positionZhonx->y+1) && way->x==positionZhonx->x)
 		{
-			while(way->y==(positionZhonx->y+1) && way->x==positionZhonx->x)
-			{
-				length++;
-				positionZhonx->x=way->x;
-				positionZhonx->y=way->y;
-				oldDote=way;
-				way=way->next;
-				free(oldDote);
-			}
-			move_zhonx(SOUTH,&positionZhonx->orientation,length);
-			new_cell(see_walls(),maze,*positionZhonx);
+
+			additionX=0;
+			additionY=1;
+			orientaionToGo=SOUTH;
 		}
 		else
 		{
@@ -1013,11 +1084,21 @@ void moveRealZhonx(labyrinthe *maze, positionRobot *positionZhonx, coordinate *w
 			hal_ui_clear_scr(app_context.ui);
 			hal_ui_display_txt(app_context.ui,0,0,"Error way");
 			hal_ui_refresh(app_context.ui);
-			while(wait_validation(10000)!=-1);
+			while(wait_validation(10000)==-1);
 		}
+
+		while(way->y==(positionZhonx->y+additionY) && way->x==positionZhonx->x+additionX)
+		{
+			length++;
+			positionZhonx->x=way->x;
+			positionZhonx->y=way->y;
+			oldDote=way;
+			way=way->next;
+			free(oldDote);
+		}
+		move_zhonx(orientaionToGo,&positionZhonx->orientation,length);
+		new_cell(see_walls(),maze,*positionZhonx);
 	}
-	hal_os_sleep(200);
-	hal_step_motor_disable();
 }
 void move_zhonx (int direction_to_go, int *direction_robot, int numberOfCase)
 {
@@ -1026,29 +1107,108 @@ void move_zhonx (int direction_to_go, int *direction_robot, int numberOfCase)
 	switch (turn)
 	{
 		case FORWARD :
-				hal_beeper_beep(app_context.beeper,440,300);
-				step_motors_move(CELL_LENGTH*numberOfCase, 0, 0);
 			break;
 		case RIGHT :
-				hal_beeper_beep(app_context.beeper,494,300);
+				//step_motors_rotate(-90, 90, CHAIN_LEFT | CHAIN_RIGHT);
+	//			step_motors_rotate(-90, 90, 0);
 				step_motors_rotate_in_place(-90);
-				step_motors_move(CELL_LENGTH*numberOfCase, 0, 0);
-			break;
+				break;
 		case RETURN :
-				hal_beeper_beep(app_context.beeper,440,300);
-				hal_beeper_beep(app_context.beeper,494,300);
-				hal_beeper_beep(app_context.beeper,262,300);
 				step_motors_rotate_in_place(180);
-				step_motors_move(CELL_LENGTH*numberOfCase, 0, 0);
-			break;
+				break;
 		case LEFT :
-				hal_beeper_beep(app_context.beeper,262,300);
+//				step_motors_rotate(90, 90, 0);
 				step_motors_rotate_in_place(90);
-				step_motors_move(CELL_LENGTH*numberOfCase, 0, 0);
 
 			break;
-
 	}
+//	step_motors_move(CELL_LENGTH*numberOfCase, 0, CHAIN_LEFT | CHAIN_RIGHT);
+	step_motors_move(CELL_LENGTH*numberOfCase, 0, 0);
+}
+
+void moveRealZhonxArc(labyrinthe *maze, positionRobot *positionZhonx, coordinate *way)
+{
+	coordinate *oldDote;
+	int length;
+	char additionY=0;
+	char additionX=0;
+	char orientaionToGo=NORTH;
+	while(way!=null)
+	{
+		length=0;
+		if(way->x==(positionZhonx->x+1) && way->y==positionZhonx->y)
+		{
+			additionX=1;
+			additionY=0;
+			orientaionToGo=EAST;
+		}
+		else if(way->x==(positionZhonx->x-1) && way->y==positionZhonx->y)
+		{
+			additionX=-1;
+			additionY=0;
+			orientaionToGo=WEST;
+		}
+		else if(way->y==(positionZhonx->y-1) && way->x==positionZhonx->x)
+		{
+
+			additionX=0;
+			additionY=-1;
+			orientaionToGo=NORTH;
+		}
+		else if(way->y==(positionZhonx->y+1) && way->x==positionZhonx->x)
+		{
+
+			additionX=0;
+			additionY=1;
+			orientaionToGo=SOUTH;
+		}
+		else
+		{
+			hal_os_sleep(200);
+			hal_step_motor_disable();
+			hal_ui_clear_scr(app_context.ui);
+			hal_ui_display_txt(app_context.ui,0,0,"Error way");
+			hal_ui_refresh(app_context.ui);
+			while(wait_validation(10000)==-1);
+		}
+
+		while(way->y==(positionZhonx->y+additionY) && way->x==positionZhonx->x+additionX)
+		{
+			length++;
+			positionZhonx->x=way->x;
+			positionZhonx->y=way->y;
+			oldDote=way;
+			way=way->next;
+			free(oldDote);
+		}
+		move_zhonx_arc(orientaionToGo,&positionZhonx->orientation,length);
+		new_cell(see_walls(),maze,*positionZhonx);
+	}
+}
+void move_zhonx_arc (int direction_to_go, int *direction_robot, int numberOfCase)
+{
+	int turn=(4+direction_to_go-*direction_robot)%4;
+	*direction_robot=direction_to_go;
+	switch (turn)
+	{
+		case FORWARD :
+			break;
+		case RIGHT :
+				step_motors_rotate(-90, 90, 0);
+	//			step_motors_rotate(-90, 90, 0);
+//				step_motors_rotate_in_place(-90);
+				break;
+		case RETURN :
+				step_motors_rotate_in_place(180);
+				break;
+		case LEFT :
+				step_motors_rotate(90, 90, 0);
+//				step_motors_rotate_in_place(90);
+
+			break;
+	}
+	step_motors_move(CELL_LENGTH*numberOfCase, 0, CHAIN_LEFT | CHAIN_RIGHT);
+//	step_motors_move(CELL_LENGTH*numberOfCase, 0, 0);
 }
 void new_cell(inputs new_walls, labyrinthe *maze,positionRobot positionZhonx)
 	{
@@ -1096,7 +1256,7 @@ void new_cell(inputs new_walls, labyrinthe *maze,positionRobot positionZhonx)
 					maze->cell[positionZhonx.x-1][positionZhonx.y].wall_east=new_walls.front;
 				if(positionZhonx.y>0)
 					maze->cell[positionZhonx.x][positionZhonx.y-1].wall_south=new_walls.right;
-				if(positionZhonx.y>(MAZE_SIZE-1))
+				if(positionZhonx.y<(MAZE_SIZE-1))
 					maze->cell[positionZhonx.x][positionZhonx.y+1].wall_north=new_walls.left;
 				break;
 			}
@@ -1142,7 +1302,9 @@ void poids(labyrinthe *maze, int xFinish, int yfinish, bool wallNoKnow)
 	int length=0;
 	int x=xFinish;
 	int y=yfinish;
-	coordinate *dotes_to_verifie=new_dot(NULL,x,y,length,maze);
+	maze->cell[x][y].length=length;
+	coordinate *dotes_to_verifie=NULL;
+	new_dot(&dotes_to_verifie,x,y);
 	coordinate *new_dotes_to_verifie=NULL;
 	coordinate *pt=NULL;
 
@@ -1156,24 +1318,28 @@ void poids(labyrinthe *maze, int xFinish, int yfinish, bool wallNoKnow)
 					//printf(" %d\n%d %d\n %d\n\n",maze->cell[x][y].wall_north,maze->cell[x][y].wall_west ,maze->cell[x][y].wall_east,maze->cell[x][y].wall_south);
 					x=dotes_to_verifie->x;
 					y=dotes_to_verifie->y;
-					pt=(void*)dotes_to_verifie->previous;
+					pt=dotes_to_verifie->previous;
 					free(dotes_to_verifie);
 					dotes_to_verifie=pt;
 					if((maze->cell[x][y].wall_north==NO_WALL || (wallNoKnow == true && maze->cell[x][y].wall_north == NO_KNOW)) && maze->cell[x][y-1].length>length-1 && y>0)
 							{
-							new_dotes_to_verifie=new_dot(new_dotes_to_verifie,x,y-1,length,maze);
+							new_dot(&new_dotes_to_verifie,x,y-1);
+							maze->cell[x][y-1].length=length;
 							}
 					if((maze->cell[x][y].wall_east==NO_WALL || (wallNoKnow == true && maze->cell[x][y].wall_east == NO_KNOW)) && maze->cell[x+1][y].length>length && x+1<MAZE_SIZE)
 							{
-							new_dotes_to_verifie=new_dot(new_dotes_to_verifie,x+1,y,length,maze);
+							new_dot(&new_dotes_to_verifie,x+1,y);
+							maze->cell[x+1][y].length=length;
 							}
 					if((maze->cell[x][y].wall_south==NO_WALL || (wallNoKnow == true && maze->cell[x][y].wall_south == NO_KNOW)) && maze->cell[x][y+1].length>length && y+1<MAZE_SIZE)
 							{
-							new_dotes_to_verifie=new_dot(new_dotes_to_verifie,x,y+1,length,maze);
+							new_dot(&new_dotes_to_verifie,x,y+1);
+							maze->cell[x][y+1].length=length;
 							}
 					if((maze->cell[x][y].wall_west==NO_WALL || (wallNoKnow == true && maze->cell[x][y].wall_west == NO_KNOW)) && maze->cell[x-1][y].length>length && x>0)
 							{
-							new_dotes_to_verifie=new_dot(new_dotes_to_verifie,x-1,y,length,maze);
+							new_dot(&new_dotes_to_verifie,x-1,y);
+							maze->cell[x-1][y].length=length;
 							}
 					}
 			//print_length(*maze);
@@ -1182,26 +1348,23 @@ void poids(labyrinthe *maze, int xFinish, int yfinish, bool wallNoKnow)
 			}
 	}
 
-coordinate* new_dot(coordinate *old_dot,int x,int y, int length, labyrinthe *maze)
+void new_dot(coordinate **old_dot,int x,int y)
 	{
 	//printf("x : %d ",x);
 	//printf("y : %d ",y);
-	//printf("length : %d\n ",length);
-	if(old_dot!=NULL)
+	if(*old_dot!=NULL)
 			{
-			old_dot->next=calloc_s(1,sizeof(coordinate));
-			coordinate *pt=old_dot;
-			old_dot=(void*)old_dot->next;
-			old_dot->previous=(void*)pt;
+			(*old_dot)->next=calloc_s(1,sizeof(coordinate));
+			coordinate *pt=*old_dot;
+			*old_dot=(*old_dot)->next;
+			(*old_dot)->previous=pt;
 			}
 	else
 			{
-			old_dot=(coordinate*)calloc_s(1,sizeof(coordinate));
+			(*old_dot)=(coordinate*)calloc_s(1,sizeof(coordinate));
 			}
-	old_dot->x=x;
-	old_dot->y=y;
-	maze->cell[x][y].length=length;
-	return old_dot;
+	(*old_dot)->x=x;
+	(*old_dot)->y=y;
 	}
 void maze_init (labyrinthe *maze)
 	{
@@ -1568,9 +1731,10 @@ void print_length(const labyrinthe maze)
 	}
 void clearMazelength(labyrinthe* maze)
 	{
-	for(int y=0; y<MAZE_SIZE; y++)
+	int x,y;
+	for(y=0; y<MAZE_SIZE; y++)
 			{
-			for(int x=0; x<MAZE_SIZE; x++)
+			for(x=0; x<MAZE_SIZE; x++)
 					{
 					maze->cell[x][y].length=2000;
 					}
@@ -1598,13 +1762,14 @@ inputs see_walls ()
 bool mini_way_find(labyrinthe *maze, int x_finish, int y_finish)
 {
 	int lengthMini;
+	clearMazelength(maze);
 	poids(maze,zhonx_settings.x_finish_maze,zhonx_settings.y_finish_maze,true);
 	lengthMini=maze->cell[0][0].length;
 	clearMazelength(maze);
 	poids(maze,zhonx_settings.x_finish_maze,zhonx_settings.y_finish_maze,false);
 	hal_ui_clear_scr(app_context.ui);
-	ssd1306PrintInt(0,0,"distance 1 : ",lengthMini,&Font_3x6);
-	ssd1306PrintInt(0,10,"distance 2 : ",maze->cell[0][0].length,&Font_3x6);
+	ssd1306PrintInt(0,0,"distance 1 : ",lengthMini,&Font_5x8);
+	ssd1306PrintInt(0,10,"distance 2 : ",maze->cell[0][0].length,&Font_5x8);
 	switch (lengthMini !=maze->cell[0][0].length) {
 		case true:
 			hal_ui_display_txt(app_context.ui,20,0,"2 Distance = : no");
@@ -1618,35 +1783,78 @@ bool mini_way_find(labyrinthe *maze, int x_finish, int y_finish)
 }
 void clearPartLenght(labyrinthe *maze,char x, char y)
 {
-	if(maze->cell[x][y].wall_east==WALL_KNOW)
-	{
-		if(maze->cell[x][y].length == maze->cell[x+1][y].length+1)
-		{
-			maze->cell[x+1][y].length=2000;
-
-		}
-	}
-	if(maze->cell[x][y].wall_west==WALL_KNOW)
-		{
-			if(maze->cell[x][y].length == maze->cell[x-1][y].length+1)
-			{
-				maze->cell[x+1][y].length=2000;
-			}
-		}
-	if(maze->cell[x][y].wall_north==WALL_KNOW)
-		{
-			if(maze->cell[x][y].length == maze->cell[x][y-1].length+1)
-			{
-				maze->cell[x+1][y].length=2000;
-			}
-		}
-	if(maze->cell[x][y].wall_south==WALL_KNOW)
-		{
-			if(maze->cell[x][y].length == maze->cell[x][y+1].length+1)
-			{
-				maze->cell[x+1][y].length=2000;
-			}
-		}
+//	coordinate newDotesToVerifie=NULL;
+//	coordinate DotesToVerifie=NULL;
+//	if(maze->cell[x][y].wall_east==WALL_KNOW)
+//	{
+//		if(maze->cell[x][y].length == maze->cell[x+1][y].length+1)
+//		{
+//			maze->cell[x+1][y].length=2000;
+//			new_dot(&DotesToVerifie,x+1,y);
+//		}
+//	}
+//	if(maze->cell[x][y].wall_west==WALL_KNOW)
+//	{
+//		if(maze->cell[x][y].length == maze->cell[x-1][y].length+1)
+//		{
+//			maze->cell[x+1][y].length=2000;
+//			new_dot(&DotesToVerifie,x-1,y);
+//		}
+//	}
+//	if(maze->cell[x][y].wall_north==WALL_KNOW)
+//	{
+//		if(maze->cell[x][y].length == maze->cell[x][y-1].length+1)
+//		{
+//			maze->cell[x+1][y].length=2000;
+//			new_dot(&DotesToVerifie,x,y-1);
+//		}
+//	}
+//	if(maze->cell[x][y].wall_south==WALL_KNOW)
+//	{
+//		if(maze->cell[x][y].length == maze->cell[x][y+1].length+1)
+//		{
+//			maze->cell[x+1][y].length=2000;
+//			new_dot(&DotesToVerifie,x,y-1);
+//		}
+//	}
+//	while (DotesToVerifie!=NULL)
+//	{
+//	length++;
+//	while (DotesToVerifie!=NULL)
+//			{
+//			//printf("x: %2d y:%2d\n",x,y);
+//			//printf(" %d\n%d %d\n %d\n\n",maze->cell[x][y].wall_north,maze->cell[x][y].wall_west ,maze->cell[x][y].wall_east,maze->cell[x][y].wall_south);
+//			x=DotesToVerifie->x;
+//			y=DotesToVerifie->y;
+//			pt=(void*)DotesToVerifie->previous;
+//			free(DotesToVerifie);
+//			DotesToVerifie=pt;
+//			if((maze->cell[x][y].wall_north==NO_WALL || maze->cell[x][y].wall_north == NO_KNOW) && maze->cell[x][y-1].length==length+1 && y>0)
+//					{
+//					new_dot(&newDotesToVerifie,x,y-1);
+//					maze->cell[x][y-1].length=2000;
+//					}
+//			if((maze->cell[x][y].wall_east==NO_WALL || maze->cell[x][y].wall_east == NO_KNOW) && maze->cell[x+1][y].length==length+1 && x+1<MAZE_SIZE)
+//					{
+//					new_dot(&newDotesToVerifie,x+1,y);
+//					maze->cell[x+1][y].length=2000;
+//					}
+//			if((maze->cell[x][y].wall_south==NO_WALL || maze->cell[x][y].wall_south == NO_KNOW) && maze->cell[x][y+1].length==length+1 && y+1<MAZE_SIZE)
+//					{
+//					new_dot(&newDotesToVerifie,x,y+1);
+//					maze->cell[x][y+1].length=2000;
+//					}
+//			if((maze->cell[x][y].wall_west==NO_WALL || maze->cell[x][y].wall_west == NO_KNOW) && maze->cell[x-1][y].length==length+1 && x>0)
+//					{
+//					new_dot(&newDotesToVerifie,x-1,y);
+//					maze->cell[x-1][y].length=2000;
+//					}
+//			Length++;
+//			}
+//	//print_length(*maze);
+//	DotesToVerifie=newDotesToVerifie;
+//	newDotesToVerifie=NULL;
+//	}
 }
 #endif
 void trajectoire1(char *Tab, int taille)

@@ -87,8 +87,8 @@
 //1500
 
 /* Battery parameters */
-#define BATTERY_MIN_VALUE           (270)  // Theoretically corresponds to 6V
-#define BATTERY_MAX_VALUE           (339)  // Theoretically corresponds to 8.25V
+#define BATTERY_MIN_VALUE           (2700)  // Theoretically corresponds to 6V
+#define BATTERY_MAX_VALUE           (4095)  // Theoretically corresponds to 8.25V
 #define BATTERY_USAGE_ZONE          (BATTERY_MAX_VALUE - BATTERY_MIN_VALUE)
 
 /* Maze settings */

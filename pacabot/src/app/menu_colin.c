@@ -22,6 +22,7 @@
 #include "hal/hal_ui.h"
 #include "stm32f4xx_rcc.h"
 #include "stm32f4xx.h"
+#include "stm32f4xx_gpio.h"
 
 #include "config/basetypes.h"
 #include "config/errors.h"
@@ -41,6 +42,7 @@
 #define JOYSTICK_PUSH       GPIOC, GPIO_Pin_12
 #define RETURN_BUTTON       GPIOC, GPIO_Pin_13
 /* Extern functions */
+extern void hal_ui_anti_rebonds (GPIO_TypeDef* gpio, uint16_t gpio_pin);
 extern int test_hal_adc(void);
 extern int test_hal_color_sensor(void);
 extern int test_hal_serial(void);
@@ -185,15 +187,15 @@ int menu_colin(menuItem menu)
 		if (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET)
 		{
 			// Wait until button is released
-			anti_rebonds (JOYSTICK_LEFT);
+			hal_ui_anti_rebonds (JOYSTICK_LEFT);
 			return 1;
 		}
 
 		// Joystick down
 		if (GPIO_ReadInputDataBit(JOYSTICK_DOWN) == Bit_RESET)
 		{
+			hal_ui_anti_rebonds (JOYSTICK_DOWN);
             hal_beeper_beep(app_context.beeper, 4000, 10);
-			anti_rebonds (JOYSTICK_DOWN);
 			if(menu.line[line_menu+1].name!=null)
 			{
 				line_menu++;
@@ -214,7 +216,7 @@ int menu_colin(menuItem menu)
 		// Joystick up
 		if (GPIO_ReadInputDataBit(JOYSTICK_UP) == Bit_RESET)
 		{
-			anti_rebonds (JOYSTICK_UP);
+			hal_ui_anti_rebonds (JOYSTICK_UP);
             hal_beeper_beep(app_context.beeper, 4000, 10);
 			if(line_screen==1)
 			{
@@ -238,9 +240,8 @@ int menu_colin(menuItem menu)
 		// Validate button
 		if(GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET)
 		{
-
+			hal_ui_anti_rebonds (JOYSTICK_RIGHT);
             hal_beeper_beep(app_context.beeper, 4000, 10);
-			anti_rebonds (JOYSTICK_RIGHT);
 			switch(menu.line[line_menu].type)
 			{
 				case 'b':
@@ -269,19 +270,8 @@ int menu_colin(menuItem menu)
 	}
 	return -1;
 }
-void anti_rebonds (GPIO_TypeDef* gpio, uint16_t gpio_pin)
-{
-	unsigned long int time_base = hal_os_get_systicks();
-	do
-	{
-		if (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET)
-			time_base = hal_os_get_systicks();
-	}while (time_base!=(hal_os_get_systicks()-200));
-}
 void menu_animate(unsigned char y, unsigned char max_y)
 {
-//	unsigned char y=y_;
-//	unsigned char max_y=max_y_;
 
     if (max_y > y)
     {
@@ -308,6 +298,7 @@ void affiche_menu(menuItem menu,int line)
 {
 	hal_ui_clear_scr(app_context.ui);
 	hal_ui_display_txt(app_context.ui,0,0,menu.name);
+	ssd1306DrawLine(0, 9, 128, 9);
 	for (int i=0;i<MAX_LINE_SCREEN;i++)
 	{
 		if(menu.line[i].name!=null)
@@ -344,3 +335,14 @@ void affiche_menu(menuItem menu,int line)
 		hal_ui_refresh(app_context.ui);
 	}
 }
+//void hal_ui_anti_rebonds (GPIO_TypeDef* gpio, uint16_t gpio_pin)
+//{
+//	unsigned long int time_wait=500;
+//	unsigned long int time_base = hal_os_get_systicks();
+//	do
+//	{
+//		if (GPIO_ReadInputDataBit(gpio,gpio_pin) == Bit_RESET)
+//			time_base = hal_os_get_systicks();
+//	}while (time_base>(hal_os_get_systicks()-time_wait));
+//}
+

@@ -34,6 +34,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 /* GPIO definitions */
 #define JOYSTICK_LEFT_PIN    GPIO_Pin_8
@@ -74,6 +75,7 @@
 static void RCC_Configuration(void);
 static void GPIO_Configuration(void);
 static void menu_animate(unsigned char y, unsigned char max_y);
+void hal_ui_anti_rebonds (GPIO_TypeDef* gpio, uint16_t gpio_pin);
 
 /* Static variables */
 static HAL_BEEPER_HANDLE beeper;
@@ -92,7 +94,7 @@ int hal_ui_init(void)
     ssd1306Init(0);
     ssd1306Refresh();
     ssd1306ClearScreen();
-    ssd1306DrawBmp(Pacabot_bmp, 5, 1, 127, 46);
+    ssd1306DrawBmp(Pacabot_bmp, 1, 1, 128, 40);
     ssd1306Refresh();
     for (i = 0; i < 100; i += 2)
     {
@@ -339,9 +341,7 @@ int hal_ui_display_menu(HAL_UI_HANDLE handle, void *menu,
             // Exit Button
             if (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET)
             {
-                // Wait until button is released
-                while (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET);
-                hal_os_sleep(VALIDATE_WAIT_TIME);
+            	hal_ui_anti_rebonds(JOYSTICK_LEFT);
                 (*selected_index) = 0;
                 return HAL_UI_E_SUCCESS;
             }
@@ -349,26 +349,26 @@ int hal_ui_display_menu(HAL_UI_HANDLE handle, void *menu,
             // Joystick down
             if (GPIO_ReadInputDataBit(JOYSTICK_DOWN) == Bit_RESET)
             {
+                hal_ui_anti_rebonds(JOYSTICK_DOWN);
                 if ((*selected_index) < items_nb)
                 {
                     menu_animate(j + 1, j + 10);
                     j += 10;
 
                     hal_beeper_beep(beeper, 4000, 10);
-                    hal_os_sleep(VALIDATE_WAIT_TIME);
                     (*selected_index)++;
                 }
             }
             // Joystick up
             if (GPIO_ReadInputDataBit(JOYSTICK_UP) == Bit_RESET)
             {
+                hal_ui_anti_rebonds(JOYSTICK_UP);
                 if ((*selected_index) > 1)
                 {
                     menu_animate(j - 1, j - 10);
                     j -= 10;
 
                     hal_beeper_beep(beeper, 4000, 10);
-                    hal_os_sleep(VALIDATE_WAIT_TIME);
                     (*selected_index)--;
                 }
             }
@@ -377,7 +377,7 @@ int hal_ui_display_menu(HAL_UI_HANDLE handle, void *menu,
             if(GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET)
             {
                 // Wait until button is released
-                while (GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET);
+                hal_ui_anti_rebonds(JOYSTICK_RIGHT);
                 hal_os_sleep(VALIDATE_WAIT_TIME);
 
                 if (item[(*selected_index) - 1].handler != null)
@@ -605,14 +605,14 @@ int hal_ui_modify_bool_param(HAL_UI_HANDLE handle,
         // Exit Button
         if (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET)
         {
-            // Wait until button is released
-            while (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET);
-            hal_os_sleep(VALIDATE_WAIT_TIME);
+        	hal_ui_anti_rebonds(JOYSTICK_LEFT);
             break;
         }
         else if ((GPIO_ReadInputDataBit(JOYSTICK_UP) == Bit_RESET) ||
                  (GPIO_ReadInputDataBit(JOYSTICK_DOWN) == Bit_RESET))
         {
+        	hal_ui_anti_rebonds(JOYSTICK_UP);
+        	hal_ui_anti_rebonds(JOYSTICK_DOWN);
             if (param_copy == true)
             {
                 param_copy = false;
@@ -630,9 +630,7 @@ int hal_ui_modify_bool_param(HAL_UI_HANDLE handle,
         }
         else if (GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET)
         {
-            // Wait until button is released
-            while (GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET);
-            hal_os_sleep(VALIDATE_WAIT_TIME);
+        	hal_ui_anti_rebonds(JOYSTICK_RIGHT);
 
             *param = param_copy;
             hal_ui_clear_scr(handle);
@@ -647,127 +645,172 @@ int hal_ui_modify_bool_param(HAL_UI_HANDLE handle,
 int hal_ui_modify_long_param(HAL_UI_HANDLE handle, char *param_name,
                              unsigned long *param, int step)
 {
-    char str[40];
-    unsigned long param_copy = *param;
+		char collone=0;
+	    char str[40];
+	    unsigned long param_copy = *param;
 
-    hal_ui_clear_scr(handle);
+	    hal_ui_clear_scr(handle);
 
-    // Write the parameter name
-    ssd1306DrawString(0, 0,
-                      touppercase(param_name, strlen(param_name)), &Font_3x6);
-    ssd1306DrawLine(0, 10, 128, 10);
+	    // Write the parameter name
+	    ssd1306DrawString(0, 0,
+	                      touppercase(param_name, strlen(param_name)), &Font_3x6);
+	    ssd1306DrawLine(0, 10, 128, 10);
 
-    sprintf(str, "%i", (int)param_copy);
-    ssd1306DrawString(0, 28, str, &Font_8x8);
-    ssd1306DrawString(0, 50, "PRESS 'RIGHT' TO VALIDATE", &Font_3x6);
-    ssd1306DrawString(0, 57, "      'LEFT'  TO RETURN.", &Font_3x6);
-    ssd1306Refresh();
+	    sprintf(str, "%10d", param_copy);
+	    ssd1306DrawString(0, 28, str, &Font_8x8);
+	    ssd1306DrawString(0, 50, "PRESS 'RIGHT' TO VALIDATE", &Font_3x6);
+	    ssd1306DrawString(0, 57, "      'LEFT'  TO RETURN.", &Font_3x6);
+		ssd1306DrawString((10-collone)*8,20,"^",&Font_8x8);
+		ssd1306DrawString((10-collone)*8,36,"v",&Font_8x8);
+	    ssd1306Refresh();
 
-    while (1)
-    {
-        // Exit Button
-        if (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET)
-        {
-            // Wait until button is released
-            while (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET);
-            hal_os_sleep(VALIDATE_WAIT_TIME);
-            break;
-        }
-        else if (GPIO_ReadInputDataBit(JOYSTICK_UP) == Bit_RESET)
-        {
-            param_copy += step;
-            ssd1306ClearRect(0, 28, 164, 8);
-            sprintf(str, "%i", (int)param_copy);
-            ssd1306DrawString(0, 28, str, &Font_8x8);
-            ssd1306Refresh();
-            hal_os_sleep(100);
-        }
-        else if (GPIO_ReadInputDataBit(JOYSTICK_DOWN) == Bit_RESET)
-        {
-            param_copy -= step;
-            ssd1306ClearRect(0, 28, 164, 8);
-            sprintf(str, "%i", (int)param_copy);
-            ssd1306DrawString(0, 28, str, &Font_8x8);
-            ssd1306Refresh();
-            hal_os_sleep(100);
-        }
-        else if (GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET)
-        {
-            // Wait until button is released
-            while (GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET);
-            hal_os_sleep(VALIDATE_WAIT_TIME);
+	    while (1)
+	    {
+	        // Exit Button
+	        if (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET)
+	        {
+	        	hal_ui_anti_rebonds(JOYSTICK_LEFT);
+	            if(collone==9)
+	            	break;
+	            else
+	            {
+	            	collone++;
+					ssd1306ClearRect(0,20,128,8);
+					ssd1306ClearRect(0,36,128,8);
+					ssd1306DrawString((9-collone)*9,20,"^",&Font_8x8);
+					ssd1306DrawString((9-collone)*9,36,"v",&Font_8x8);
+					ssd1306Refresh();
+	            }
+	        }
+	        else if (GPIO_ReadInputDataBit(JOYSTICK_UP) == Bit_RESET)
+	        {
+	        	hal_ui_anti_rebonds(JOYSTICK_UP);
+	            param_copy += (step*pow(10,collone));
+	            ssd1306ClearRect(0, 28, 164, 8);
+	            sprintf(str, "%10d", param_copy);
+	            ssd1306DrawString(0, 28, str, &Font_8x8);
+	            ssd1306Refresh();
+	            hal_os_sleep(100);
+	        }
+	        else if (GPIO_ReadInputDataBit(JOYSTICK_DOWN) == Bit_RESET)
+	        {
+	        	hal_ui_anti_rebonds(JOYSTICK_DOWN);
+	            param_copy -= (step*pow(10,collone));
+	            ssd1306ClearRect(0, 28, 164, 8);
+	            sprintf(str, "%10i", (int)param_copy);
+	            ssd1306DrawString(0, 28, str, &Font_8x8);
+	            ssd1306Refresh();
+	            hal_os_sleep(100);
+	        }
+	        else if (GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET)
+	        {
+	        	hal_ui_anti_rebonds(JOYSTICK_RIGHT);
+	            if(collone==0)
+	            {
+					*param = param_copy;
+					hal_ui_clear_scr(handle);
+					ssd1306Refresh();
+					break;
+	            }
+	            else
+	            {
+	            	collone--;
+					ssd1306ClearRect(0,20,128,8);
+					ssd1306ClearRect(0,36,128,8);
+	            	ssd1306DrawString((9-collone)*9,20,"^",&Font_8x8);
+	            	ssd1306DrawString((9-collone)*9,36,"v",&Font_8x8);
+					ssd1306Refresh();
+	            }
+	        }
+	    }
 
-            *param = param_copy;
-            hal_ui_clear_scr(handle);
-            ssd1306Refresh();
-            break;
-        }
-    }
-
-    return HAL_UI_E_SUCCESS;
+	    return HAL_UI_E_SUCCESS;
 }
 
 int hal_ui_modify_int_param(HAL_UI_HANDLE handle, char *param_name,
                              unsigned int *param, int step)
 {
+	char collone=0;
     char str[40];
     unsigned int param_copy = *param;
 
     hal_ui_clear_scr(handle);
 
-    // Write the parameter name
-    ssd1306DrawString(0, 0,
-                      touppercase(param_name, strlen(param_name)), &Font_3x6);
-    ssd1306DrawLine(0, 10, 128, 10);
+	// Write the parameter name
+	ssd1306DrawString(0, 0,
+					  touppercase(param_name, strlen(param_name)), &Font_3x6);
+	ssd1306DrawLine(0, 10, 128, 10);
 
-    sprintf(str, "%i", (int)param_copy);
-    ssd1306DrawString(0, 28, str, &Font_8x8);
-    ssd1306DrawString(0, 50, "PRESS 'RIGHT' TO VALIDATE", &Font_3x6);
-    ssd1306DrawString(0, 57, "      'LEFT'  TO RETURN.", &Font_3x6);
-    ssd1306Refresh();
+	sprintf(str, "%10i", (int)param_copy);
+	ssd1306DrawString(0, 28, str, &Font_8x8);
+	ssd1306DrawString(0, 50, "PRESS 'RIGHT' TO VALIDATE", &Font_3x6);
+	ssd1306DrawString(0, 57, "      'LEFT'  TO RETURN.", &Font_3x6);
+	ssd1306DrawString((10-collone)*8,20,"^",&Font_8x8);
+	ssd1306DrawString((10-collone)*8,36,"v",&Font_8x8);
+	ssd1306Refresh();
 
-    while (1)
-    {
-        // Exit Button
-        if (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET)
-        {
-            // Wait until button is released
-            while (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET);
-            hal_os_sleep(VALIDATE_WAIT_TIME);
-            break;
-        }
-        else if (GPIO_ReadInputDataBit(JOYSTICK_UP) == Bit_RESET)
-        {
-            param_copy += step;
-            ssd1306ClearRect(0, 28, 164, 8);
-            sprintf(str, "%i", (int)param_copy);
-            ssd1306DrawString(0, 28, str, &Font_8x8);
-            ssd1306Refresh();
-            hal_os_sleep(100);
-        }
-        else if (GPIO_ReadInputDataBit(JOYSTICK_DOWN) == Bit_RESET)
-        {
-            param_copy -= step;
-            ssd1306ClearRect(0, 28, 164, 8);
-            sprintf(str, "%i", (int)param_copy);
-            ssd1306DrawString(0, 28, str, &Font_8x8);
-            ssd1306Refresh();
-            hal_os_sleep(100);
-        }
-        else if (GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET)
-        {
-            // Wait until button is released
-            while (GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET);
-            hal_os_sleep(VALIDATE_WAIT_TIME);
+	while (1)
+	{
+		// Exit Button
+		if (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET)
+		{
+			hal_ui_anti_rebonds(JOYSTICK_LEFT);
+			if(collone==9)
+				break;
+			else
+			{
+				collone++;
+				ssd1306ClearRect(0,20,128,8);
+				ssd1306ClearRect(0,36,128,8);
+				ssd1306DrawString((9-collone)*9,20,"^",&Font_8x8);
+				ssd1306DrawString((9-collone)*9,36,"v",&Font_8x8);
+				ssd1306Refresh();
+			}
+		}
+		else if (GPIO_ReadInputDataBit(JOYSTICK_UP) == Bit_RESET)
+		{
+			hal_ui_anti_rebonds(JOYSTICK_UP);
+			param_copy += (step*pow(10,collone));
+			ssd1306ClearRect(0, 28, 164, 8);
+			sprintf(str, "%10i", (int)param_copy);
+			ssd1306DrawString(0, 28, str, &Font_8x8);
+			ssd1306Refresh();
+			hal_os_sleep(100);
+		}
+		else if (GPIO_ReadInputDataBit(JOYSTICK_DOWN) == Bit_RESET)
+		{
+			hal_ui_anti_rebonds(JOYSTICK_DOWN);
+			param_copy -= (step*pow(10,collone));
+			ssd1306ClearRect(0, 28, 164, 8);
+			sprintf(str, "%10i", (int)param_copy);
+			ssd1306DrawString(0, 28, str, &Font_8x8);
+			ssd1306Refresh();
+			hal_os_sleep(100);
+		}
+		else if (GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET)
+		{
+			hal_ui_anti_rebonds(JOYSTICK_RIGHT);
+			if(collone==0)
+			{
+				hal_os_sleep(VALIDATE_WAIT_TIME);
+				*param = param_copy;
+				hal_ui_clear_scr(handle);
+				ssd1306Refresh();
+				break;
+			}
+			else
+			{
+				collone--;
+				ssd1306ClearRect(0,20,128,8);
+				ssd1306ClearRect(0,36,128,8);
+				ssd1306DrawString((9-collone)*9,20,"^",&Font_8x8);
+				ssd1306DrawString((9-collone)*9,36,"v",&Font_8x8);
+				ssd1306Refresh();
+			}
+		}
+	}
 
-            *param = param_copy;
-            hal_ui_clear_scr(handle);
-            ssd1306Refresh();
-            break;
-        }
-    }
-
-    return HAL_UI_E_SUCCESS;
+	return HAL_UI_E_SUCCESS;
 }
 
 int hal_ui_draw_line(HAL_UI_HANDLE handle,
@@ -802,6 +845,16 @@ int hal_ui_fill_circle(HAL_UI_HANDLE handle,
     return HAL_UI_E_SUCCESS;
 }
 
+void hal_ui_anti_rebonds (GPIO_TypeDef* gpio, uint16_t gpio_pin)
+{
+	unsigned long int time_wait=70;
+	unsigned long int time_base = hal_os_get_systicks();
+	do
+	{
+		if (GPIO_ReadInputDataBit(gpio,gpio_pin) == Bit_RESET)
+			time_base = hal_os_get_systicks();
+	}while (time_base>(hal_os_get_systicks()-time_wait));
+}
 
 static void RCC_Configuration(void)
 {
