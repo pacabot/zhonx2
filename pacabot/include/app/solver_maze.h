@@ -18,7 +18,7 @@
 #define WEST 3
 #define FORWARD 0
 #define RIGHT 1
-#define RETURN 2
+#define UTURN 2
 #define LEFT 3
 #define NO_KNOW 0
 #define WALL_KNOW 1
@@ -61,6 +61,7 @@ typedef struct
     int x;
     int y;
     int orientation;
+    bool midOfCase;
 } positionRobot;
 
 
@@ -81,9 +82,9 @@ inputs see_walls ();
 void commande(int dir, int dist);
 bool mini_way_find(labyrinthe *maze, int x_finish, int y_finish);
 void trajectoire1(char *Tab, int taille);
-void moveRealZhonx(labyrinthe *maze, positionRobot *positionZhonx, coordinate *way);
-void run (labyrinthe *maze,positionRobot *positionZhonx, int xFinish, int yFinish);
+void moveRealZhonx(labyrinthe *maze, positionRobot *positionZhonx, coordinate *way, char *endX, char *endY);
+void run (labyrinthe *maze,positionRobot *positionZhonx, char xFinish, char yFinish);
 void moveRealZhonxArc(labyrinthe *maze, positionRobot *positionZhonx, coordinate *way);
-void move_zhonx_arc (int direction_to_go, int *direction_robot, int numberOfCase);
+void move_zhonx_arc (int direction_to_go, positionRobot *positionZhonx, int numberOfCase, bool endMidOfCase);
 
 #endif /* RESOLUTION_MAZE_H_ */

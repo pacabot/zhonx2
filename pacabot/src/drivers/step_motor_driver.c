@@ -158,9 +158,9 @@ int step_motors_move(int distance_mm,
     distance_steps = lround(distance_mm * STEPS_PER_MM) * 2;
 
     /* Do not accelerate if this is a chained command */
-    accel = (!check_bit(chain, CHAIN_LEFT));
+    accel = (!check_bit(chain, CHAIN_BEFORE));
     /* Do not decelerate if another command is to be chained to this one */
-    decel = (!check_bit(chain, CHAIN_RIGHT));
+    decel = (!check_bit(chain, CHAIN_AFTER));
     maintain = (distance_steps > (zhonx_settings.max_speed_distance * 2)) ? true : false;
 
     /* Compute the acceleration distance */

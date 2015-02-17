@@ -82,8 +82,9 @@ int app_initialization(void)
     zhonx_settings.correction_i = CORRECTION_I;
     zhonx_settings.max_correction = MAX_CORRECTION;
     zhonx_settings.calibration_enabled = false;
-    zhonx_settings.color_sensor_enabled = true;
-    zhonx_settings.threshold_color = 40000;
+    zhonx_settings.color_sensor_enabled = false;
+    zhonx_settings.threshold_color = 142003;
+    zhonx_settings.threshold_greater=true;
     zhonx_settings.x_finish_maze=7;
     zhonx_settings.y_finish_maze=7;
     rv = hal_os_init();
