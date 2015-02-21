@@ -33,7 +33,6 @@
 #include "oled/arrows_bmp.h"
 #include "oled/ssd1306.h"
 #include "oled/smallfonts.h"
-//#include "app/solver_maze.h"
 
 #define JOYSTICK_LEFT       GPIOC, GPIO_Pin_8
 #define JOYSTICK_UP         GPIOC, GPIO_Pin_9
@@ -45,7 +44,6 @@
 extern void hal_ui_anti_rebonds (GPIO_TypeDef* gpio, uint16_t gpio_pin);
 extern int test_hal_adc(void);
 extern int test_hal_color_sensor(void);
-extern int test_hal_serial(void);
 extern int test_hal_sensor(void);
 extern int test_hal_beeper(void);
 extern int test_hal_led(void);
@@ -56,14 +54,12 @@ extern int test_oled1(void);
 extern int test_oled2(void);
 extern int test_oled3(void);
 extern int test_step_motor_driver(void);
-extern int test_remote_control(void);
 extern int test_motor_rotate(void);
 extern int distance_cal(void);
-extern int test_maze_trajectoire(void);
-extern int maze(int i, int str);
+extern int mazeColin(void);
+extern void calibrateSimple(void);
 
 extern int sensor_calibrate(void);
-extern void run_trajectory(int trajectory_nb);
 
 
 extern app_config app_context;
@@ -72,13 +68,15 @@ menuItem maze_menu =
 {
 		"maze menu",
 		{
-				{"New maze",'f',			(void*)&maze},
+				{"New maze",'f',			(void*)&mazeColin},
 				{"x finish",'i',			(void*)&zhonx_settings.x_finish_maze},
 				{"y finish",'i',			(void*)&zhonx_settings.y_finish_maze},
 				{"color finish",'b',		(void*)&zhonx_settings.color_sensor_enabled},
-				{"calib. enabled",'b',		(void*)&zhonx_settings.calibration_enabled}
+				{"calib. enabled",'b',		(void*)&zhonx_settings.calibration_enabled},
+				{"calibration",'f',			(void*)calibrateSimple},
 //				{"Trajectory...",'f',		&trajectory_menu},
 //				{"Restore maze",            &restore_maze_menu}
+				{(char*)NULL,	0,				NULL}
 		}
 };
 menuItem motor_menu=
@@ -89,7 +87,8 @@ menuItem motor_menu=
 		{"Rotate calib.",'f',			test_motor_rotate},
 		{"Distance calib.",'f',			distance_cal},
 		{"Stepper motor move",'f',		test_step_motor_driver},
-		{"Acceleration calib.",'f',		null}
+		{"Test moteur",'f',		test_hal_step_motor},
+		{(char*)NULL,	0,				NULL}
     }
 };
 menuItem motion_settings =
@@ -101,10 +100,7 @@ menuItem motion_settings =
 		{"Default accel :",'l',			(void*)&zhonx_settings.default_accel},
 		{"Rotate accel  :",'l',			(void*)&zhonx_settings.rotate_accel},
 		{"Emerg decel   :",'l',			(void*)&zhonx_settings.emergency_decel},
-		{"test1",'f',null},
-		{"test2",'f',null},
-		{"test3",'f',null},
-		{"test4",'f',null}
+		{(char*)NULL,	0,				NULL}
     }
 };
 menuItem PID_settings =
@@ -114,7 +110,7 @@ menuItem PID_settings =
 		{"Proportional  :",'l',			(void*)&zhonx_settings.correction_p},
 		{"Integral      :",'l',			(void*)&zhonx_settings.correction_i},
 		{"Max correction:",'l',			(void*)&zhonx_settings.max_correction},
-		{NULL,			NULL,			NULL}
+		{(char*)NULL,	0,				NULL}
     }
 };
 menuItem sensor_settings =
@@ -125,7 +121,7 @@ menuItem sensor_settings =
 		{"Calibrate color",'f',			sensor_calibrate},
 		{"Threshold val :",'l',			(void*)&zhonx_settings.threshold_color},
 		{"End Greater?  :",'b',			(void*)&zhonx_settings.threshold_greater},
-		{NULL,			NULL,			NULL}
+		{(char*)NULL,	0,				NULL}
     }
 };
 menuItem paramters_menu=
@@ -135,7 +131,7 @@ menuItem paramters_menu=
 			{"Motion settings",'m',			(void*)&motion_settings},
 			{"PID settings",'m',			(void*)&PID_settings},
 			{"Sensor settings",'m',			(void*)&sensor_settings},
-			{NULL,			NULL,			NULL}
+			{(char*)NULL,	0,				NULL}
 //			{"Save settings",'m',			&save_settings},
 //			{"Restore settings",'m',		&restore_settings}
 		}
@@ -147,7 +143,7 @@ static const menuItem oled_menu =
 		{"OLED Test 1",'f',				test_oled1},
 		{"OLED Test 2",'f',				test_oled2},
 		{"OLED Test 3",'f',				test_oled3},
-		{NULL,			NULL,			NULL}
+		{(char*)NULL,	0,				NULL}
     }
 };
 menuItem tests_menu=
@@ -159,8 +155,10 @@ menuItem tests_menu=
 				{"Test OLED",'m',				(void*)&oled_menu},
 				{"Test motor",'m',				(void*)&motor_menu},
 				{"Test sensor",'f',				test_hal_sensor},
+				{"Test LEDs",'f',				test_hal_led},
+				{"Test LEDs",'f',				test_hal_ui},
 				{"Test color sensor",'f',		test_hal_color_sensor},
-				{NULL,			NULL,			NULL}
+				{(char*)NULL,	0,				NULL}
 		}
 };
 menuItem menu_c =
@@ -171,7 +169,7 @@ menuItem menu_c =
 			{"prameters",'m',			(void*)&paramters_menu},
 			{"test menu",'m',			(void*)&tests_menu},
 			{"beeper enabled?",'b',		(void*)&zhonx_settings.beeper_enabled},
-			{NULL,			NULL,			NULL}
+			{(char*)NULL,	0,				NULL}
 		}
 };
 int menu_colin(menuItem menu)
@@ -318,6 +316,8 @@ void affiche_menu(menuItem menu,int line)
 					ssd1306PrintInt(90,10*i+10," ",*((unsigned long*)menu.line[i+line].param),&Font_3x6);
 					break;
 				case 'f':
+					hal_ui_display_txt(app_context.ui,110,i*10+10,"->");
+					break;
 				case 'm':
 					hal_ui_display_txt(app_context.ui,115,i*10+10,">");
 					break;

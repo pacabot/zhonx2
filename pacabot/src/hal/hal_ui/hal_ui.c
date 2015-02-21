@@ -30,7 +30,7 @@
 #include "oled/ssd1306.h"
 #include "oled/smallfonts.h"
 #include "oled/pictures.h"
-#include "app/solver_maze.h"
+//#include "app/solver_maze.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -409,6 +409,7 @@ int hal_ui_display_menu(HAL_UI_HANDLE handle, void *menu,
             }
         }
     }
+    return HAL_UI_E_ERROR;
 }
 
 

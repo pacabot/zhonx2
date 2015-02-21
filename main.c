@@ -81,7 +81,7 @@ int app_initialization(void)
     zhonx_settings.correction_p = CORRECTION_P;
     zhonx_settings.correction_i = CORRECTION_I;
     zhonx_settings.max_correction = MAX_CORRECTION;
-    zhonx_settings.calibration_enabled = false;
+    zhonx_settings.calibration_enabled = true;
     zhonx_settings.color_sensor_enabled = false;
     zhonx_settings.threshold_color = 142003;
     zhonx_settings.threshold_greater=true;

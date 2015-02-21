@@ -80,5 +80,6 @@ int hal_ui_fill_rect(HAL_UI_HANDLE handle,
 int hal_ui_fill_circle(HAL_UI_HANDLE handle,
                        unsigned char x0, unsigned char y0,
                        unsigned char r);
+//void hal_ui_anti_rebonds (uint_fast16_t* gpio, uint16_t gpio_pin);
 
 #endif // __HAL_UI_H__
