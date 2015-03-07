@@ -22,5 +22,7 @@ typedef struct{
 int menu_colin(menuItem);
 void menu_animate(unsigned char y, unsigned char max_y);
 void affiche_menu(menuItem menu,int first_line);
+void graphMotorSettings (unsigned long *acceleration, unsigned long *maxSpeed, unsigned long *deceleration);
+void printGraphMotor (unsigned long acceleration, unsigned long maxSpeed, unsigned long deceleration);
 
 #endif /* MENU_COLIN_H_ */

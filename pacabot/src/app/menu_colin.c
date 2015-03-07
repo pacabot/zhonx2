@@ -91,6 +91,22 @@ menuItem motor_menu=
 		{(char*)NULL,	0,				NULL}
     }
 };
+
+menuItem testGraphicMenu =
+{
+    "test graphic menu",
+    {
+		{"Initial speed :",'l',			(void*)&zhonx_settings.initial_speed},
+		{"Default accel :",'l',			(void*)&zhonx_settings.default_accel},
+		{"Max speed dist:",'l',			(void*)&zhonx_settings.max_speed_distance},
+		{"Default accel :",'l',			(void*)&zhonx_settings.default_accel},
+		{"graphique",'g',null},
+		{"Rotate accel  :",'l',			(void*)&zhonx_settings.rotate_accel},
+		{"Emerg decel   :",'l',			(void*)&zhonx_settings.emergency_decel},
+		{(char*)NULL,	0,				NULL}
+    }
+};
+
 menuItem motion_settings =
 {
     "MOTION SETTINGS",
@@ -169,6 +185,7 @@ menuItem menu_c =
 			{"prameters",'m',			(void*)&paramters_menu},
 			{"test menu",'m',			(void*)&tests_menu},
 			{"beeper enabled?",'b',		(void*)&zhonx_settings.beeper_enabled},
+			{"test graphic",'m',			(void*)&testGraphicMenu},
 			{(char*)NULL,	0,				NULL}
 		}
 };
@@ -258,6 +275,9 @@ int menu_colin(menuItem menu)
 					if (menu.line[line_menu].param!=null)
 						menu.line[line_menu].param();
 					break;
+				case 'g':
+					graphMotorSettings(menu.line[line_menu-3].param,menu.line[line_menu-2].param,menu.line[line_menu-1].param);
+					break;
 				default:
 					break;
 			}
@@ -334,6 +354,30 @@ void affiche_menu(menuItem menu,int line)
 		hal_ui_fill_rect(app_context.ui,123,heightOneItem*line+10,3,MAX_LINE_SCREEN*heightOneItem);
 		hal_ui_refresh(app_context.ui);
 	}
+}
+
+void graphMotorSettings (unsigned long *acceleration, unsigned long *maxSpeed, unsigned long *deceleration)
+{
+	printGraphMotor ( *acceleration, *maxSpeed, *deceleration);
+	while(GPIO_ReadInputDataBit(JOYSTICK_RIGHT) != Bit_RESET);
+	hal_ui_anti_rebonds(JOYSTICK_RIGHT);
+}
+void printGraphMotor (unsigned long acceleration, unsigned long maxSpeed, unsigned long deceleration)
+{
+	char point1[2]={maxSpeed/acceleration,maxSpeed};
+	char point2[2]={64-maxSpeed/deceleration,maxSpeed};
+	ssd1306ClearScreen();
+	ssd1306DrawPixel(0,64);
+	ssd1306DrawPixel(point1[0],point1[1]);
+	ssd1306DrawPixel(point2[0],point2[1]);
+	ssd1306DrawPixel(128,64);
+	ssd1306Refresh();
+	ssd1306DrawLine(0,64,point1[0],point1[1]);
+	ssd1306Refresh();
+	ssd1306DrawLine(point1[0],point1[1],point2[0],point2[1]);
+	ssd1306Refresh();
+	ssd1306DrawLine(point2[0],point2[1],128,64);
+	ssd1306Refresh();
 }
 //void hal_ui_anti_rebonds (GPIO_TypeDef* gpio, uint16_t gpio_pin)
 //{

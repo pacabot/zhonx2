@@ -26,10 +26,8 @@ int test_hal_led(void)
 //        return rv;
 //    }
 
-    while (1)
+    for (int i=0;i<5;i++)
     {
-        hal_os_sleep(500);
-
         hal_led_set_state(leds, HAL_LED_COLOR_ORANGE, ENABLE);
         hal_led_set_state(leds, HAL_LED_COLOR_RED, ENABLE);
 
@@ -38,6 +36,5 @@ int test_hal_led(void)
         hal_led_set_state(leds, HAL_LED_COLOR_ORANGE, DISABLE);
         hal_led_set_state(leds, HAL_LED_COLOR_RED, DISABLE);
     }
-
     return 0;
 }
