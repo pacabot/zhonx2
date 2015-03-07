@@ -847,7 +847,7 @@ int hal_ui_fill_circle(HAL_UI_HANDLE handle,
 
 void hal_ui_anti_rebonds (GPIO_TypeDef* gpio, uint16_t gpio_pin)
 {
-	unsigned long int time_wait=70;
+	unsigned long int time_wait=50;
 	unsigned long int time_base = hal_os_get_systicks();
 	do
 	{

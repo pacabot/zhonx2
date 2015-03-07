@@ -75,7 +75,7 @@ int test_oled1(void)
     ssd1306Init(0);
     ssd1306Refresh();
     ssd1306ClearScreen();
-    ssd1306DrawBmp(Pacabot_bmp, 5, 10, 127, 46);
+    ssd1306DrawBmp(Pacabot_bmp, 1, 1, 128, 40);
     ssd1306Refresh();
     hal_os_sleep(3500);
     ssd1306ClearScreen();

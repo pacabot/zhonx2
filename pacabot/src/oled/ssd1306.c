@@ -728,8 +728,15 @@ void ssd1306DrawRect(unsigned char x, unsigned char y, unsigned char w, unsigned
 	}
 }
 /**************************************************************************/
+
 void ssd1306DrawLine(unsigned char x0, unsigned char y0, unsigned char x1, unsigned char y1)
 {
+
+	if (x0 > x1)
+	{
+		swap(x0, x1);
+		swap(y0, y1);
+	}
 	unsigned char steep = (y1 - y0) > (x1 - x0);
 	if (steep)
 	{
@@ -737,11 +744,6 @@ void ssd1306DrawLine(unsigned char x0, unsigned char y0, unsigned char x1, unsig
 		swap(x1, y1);
 	}
 
-	if (x0 > x1)
-	{
-		swap(x0, x1);
-		swap(y0, y1);
-	}
 
 	unsigned char dx, dy;
 	dx = x1 - x0;

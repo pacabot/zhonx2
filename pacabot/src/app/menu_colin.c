@@ -92,6 +92,22 @@ menuItem motor_menu=
 		{"Acceleration calib.",'f',		null}
     }
 };
+
+menuItem testGraphicMenu =
+{
+    "test graphic menu",
+    {
+		{"Initial speed :",'l',			(void*)&zhonx_settings.initial_speed},
+		{"Default accel :",'l',			(void*)&zhonx_settings.default_accel},
+		{"Max speed dist:",'l',			(void*)&zhonx_settings.max_speed_distance},
+		{"Default accel :",'l',			(void*)&zhonx_settings.default_accel},
+		{"graphique",'g',null},
+		{"Rotate accel  :",'l',			(void*)&zhonx_settings.rotate_accel},
+		{"Emerg decel   :",'l',			(void*)&zhonx_settings.emergency_decel},
+		{(char*)NULL,	0,				NULL}
+    }
+};
+
 menuItem motion_settings =
 {
     "MOTION SETTINGS",
@@ -114,7 +130,7 @@ menuItem PID_settings =
 		{"Proportional  :",'l',			(void*)&zhonx_settings.correction_p},
 		{"Integral      :",'l',			(void*)&zhonx_settings.correction_i},
 		{"Max correction:",'l',			(void*)&zhonx_settings.max_correction},
-		{NULL,			NULL,			NULL}
+		{(char*)NULL,	0,				NULL}
     }
 };
 menuItem sensor_settings =
@@ -125,7 +141,7 @@ menuItem sensor_settings =
 		{"Calibrate color",'f',			sensor_calibrate},
 		{"Threshold val :",'l',			(void*)&zhonx_settings.threshold_color},
 		{"End Greater?  :",'b',			(void*)&zhonx_settings.threshold_greater},
-		{NULL,			NULL,			NULL}
+		{(char*)NULL,	0,				NULL}
     }
 };
 menuItem paramters_menu=
@@ -135,7 +151,7 @@ menuItem paramters_menu=
 			{"Motion settings",'m',			(void*)&motion_settings},
 			{"PID settings",'m',			(void*)&PID_settings},
 			{"Sensor settings",'m',			(void*)&sensor_settings},
-			{NULL,			NULL,			NULL}
+			{(char*)NULL,	0,				NULL}
 //			{"Save settings",'m',			&save_settings},
 //			{"Restore settings",'m',		&restore_settings}
 		}
@@ -147,7 +163,7 @@ static const menuItem oled_menu =
 		{"OLED Test 1",'f',				test_oled1},
 		{"OLED Test 2",'f',				test_oled2},
 		{"OLED Test 3",'f',				test_oled3},
-		{NULL,			NULL,			NULL}
+		{(char*)NULL,	0,				NULL}
     }
 };
 menuItem tests_menu=
@@ -160,7 +176,7 @@ menuItem tests_menu=
 				{"Test motor",'m',				(void*)&motor_menu},
 				{"Test sensor",'f',				test_hal_sensor},
 				{"Test color sensor",'f',		test_hal_color_sensor},
-				{NULL,			NULL,			NULL}
+				{(char*)NULL,	0,				NULL}
 		}
 };
 menuItem menu_c =
@@ -171,7 +187,7 @@ menuItem menu_c =
 			{"prameters",'m',			(void*)&paramters_menu},
 			{"test menu",'m',			(void*)&tests_menu},
 			{"beeper enabled?",'b',		(void*)&zhonx_settings.beeper_enabled},
-			{NULL,			NULL,			NULL}
+			{(char*)NULL,	0,				NULL}
 		}
 };
 int menu_colin(menuItem menu)
@@ -260,6 +276,9 @@ int menu_colin(menuItem menu)
 					if (menu.line[line_menu].param!=null)
 						menu.line[line_menu].param();
 					break;
+				case 'g':
+					graphMotorSettings(menu.line[line_menu-3].param,menu.line[line_menu-2].param,menu.line[line_menu-1].param);
+					break;
 				default:
 					break;
 			}
@@ -334,6 +353,30 @@ void affiche_menu(menuItem menu,int line)
 		hal_ui_fill_rect(app_context.ui,123,heightOneItem*line+10,3,MAX_LINE_SCREEN*heightOneItem);
 		hal_ui_refresh(app_context.ui);
 	}
+}
+
+void graphMotorSettings (unsigned long *acceleration, unsigned long *maxSpeed, unsigned long *deceleration)
+{
+	printGraphMotor ( *acceleration, *maxSpeed, *deceleration);
+	while(GPIO_ReadInputDataBit(JOYSTICK_RIGHT) != Bit_RESET);
+	hal_ui_anti_rebonds(JOYSTICK_RIGHT);
+}
+void printGraphMotor (unsigned long acceleration, unsigned long maxSpeed, unsigned long deceleration)
+{
+	char point1[2]={maxSpeed/acceleration,maxSpeed};
+	char point2[2]={64-maxSpeed/deceleration,maxSpeed};
+	ssd1306ClearScreen();
+	ssd1306DrawPixel(0,64);
+	ssd1306DrawPixel(point1[0],point1[1]);
+	ssd1306DrawPixel(point2[0],point2[1]);
+	ssd1306DrawPixel(128,64);
+	ssd1306Refresh();
+	ssd1306DrawLine(0,64,point1[0],point1[1]);
+	ssd1306Refresh();
+	ssd1306DrawLine(point1[0],point1[1],point2[0],point2[1]);
+	ssd1306Refresh();
+	ssd1306DrawLine(point2[0],point2[1],128,64);
+	ssd1306Refresh();
 }
 //void hal_ui_anti_rebonds (GPIO_TypeDef* gpio, uint16_t gpio_pin)
 //{
