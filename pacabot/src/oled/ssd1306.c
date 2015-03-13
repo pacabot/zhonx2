@@ -13,6 +13,7 @@
 /**************************************************************************/
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx_rcc.h"
@@ -737,11 +738,16 @@ void ssd1306DrawLine(unsigned char x0, unsigned char y0, unsigned char x1, unsig
 		swap(x0, x1);
 		swap(y0, y1);
 	}
-	unsigned char steep = (y1 - y0) > (x1 - x0);
+	unsigned char steep = (unsigned char)abs((int)(y1 - y0)) > (x1 - x0);
 	if (steep)
 	{
 		swap(x0, y0);
 		swap(x1, y1);
+		if (x0 > x1)
+		{
+			swap(x0, x1);
+			swap(y0, y1);
+		}
 	}
 
 

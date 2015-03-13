@@ -33,6 +33,7 @@
 #include "oled/arrows_bmp.h"
 #include "oled/ssd1306.h"
 #include "oled/smallfonts.h"
+//#include "app/solver_maze.h"
 
 #define JOYSTICK_LEFT       GPIOC, GPIO_Pin_8
 #define JOYSTICK_UP         GPIOC, GPIO_Pin_9
@@ -44,6 +45,7 @@
 extern void hal_ui_anti_rebonds (GPIO_TypeDef* gpio, uint16_t gpio_pin);
 extern int test_hal_adc(void);
 extern int test_hal_color_sensor(void);
+extern int test_hal_serial(void);
 extern int test_hal_sensor(void);
 extern int test_hal_beeper(void);
 extern int test_hal_led(void);
@@ -54,12 +56,16 @@ extern int test_oled1(void);
 extern int test_oled2(void);
 extern int test_oled3(void);
 extern int test_step_motor_driver(void);
+extern int test_remote_control(void);
 extern int test_motor_rotate(void);
 extern int distance_cal(void);
-extern int mazeColin(void);
-extern void calibrateSimple(void);
+extern int test_maze_trajectoire(void);
+extern int maze(int i, int str);
+extern int mazeColin ();
+extern int calibrateSimple();
 
 extern int sensor_calibrate(void);
+extern void run_trajectory(int trajectory_nb);
 
 
 extern app_config app_context;

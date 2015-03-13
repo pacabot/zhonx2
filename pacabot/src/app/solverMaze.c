@@ -37,6 +37,7 @@ extern int mazeColin(void)
 	labyrinthe maze;
 	maze_init(&maze);
 	positionRobot positionZhonx;
+	/*initlisation for différent micromouse compétition*/
 	if (zhonx_settings.color_sensor_enabled==true)
 	{
 		positionZhonx.x=MAZE_SIZE/2;
@@ -51,6 +52,7 @@ extern int mazeColin(void)
 		positionZhonx.y=0;
 		positionZhonx.orientation=EAST;
 	}
+	/*end of initlisation for différent micromouse compétition*/
 	positionZhonx.midOfCase=true;
 	posXStart=positionZhonx.x;
 	posYStart=positionZhonx.y;
@@ -60,7 +62,7 @@ extern int mazeColin(void)
 		hal_os_sleep(1000);
 		calibrateSimple();
 	}
-	int lengthMini=-1;
+
 	do
 	{
 		hal_os_sleep(2000);
@@ -74,20 +76,45 @@ extern int mazeColin(void)
 						calibrateSimple();
 		doUTurn(&positionZhonx);
 		} while(mini_way_find(&maze,posXStart,posYStart, zhonx_settings.x_finish_maze, zhonx_settings.y_finish_maze));
+
+	return HAL_UI_E_SUCCESS;
+}
+
+void exploration(labyrinthe *maze, positionRobot* positionZhonx,char xFinish, char yFinish)
+{
+	coordinate way={0,0,0};
+	hal_step_motor_enable();
+	new_cell(see_walls(),maze,*positionZhonx);
+
+	while(positionZhonx->x!=xFinish || positionZhonx->y!=yFinish)
+	{
+		clearMazelength(maze);
+		poids(maze,xFinish, yFinish,true);
+		moveVirtualZhonx(*maze,*positionZhonx,&way,xFinish, yFinish);
+	moveRealZhonx(maze,positionZhonx,way.next,&xFinish,&yFinish);
+	}
+	hal_os_sleep(200);
+	hal_step_motor_disable();
+
+}
+void run1(labyrinthe *maze, positionRobot *positionZhonx,char posXStart, char posYStart)
+{
+	char choice;
 	do
 	{
 		choice=-1;
 		waitStart();
-		exploration(&maze, &positionZhonx,zhonx_settings.x_finish_maze,zhonx_settings.y_finish_maze);
+		exploration(maze, positionZhonx,zhonx_settings.x_finish_maze,zhonx_settings.y_finish_maze);
 		if (zhonx_settings.calibration_enabled==true)
 				calibrateSimple();
 		hal_os_sleep(2000);
-		exploration(&maze, &positionZhonx,posXStart,posYStart);
+		exploration(maze, positionZhonx,posXStart,posYStart);
 		if (zhonx_settings.calibration_enabled==true)
 				calibrateSimple();
-		doUTurn(&positionZhonx);
+		doUTurn(positionZhonx);
 		hal_ui_clear_scr(app_context.ui);
-		hal_ui_display_txt(app_context.ui,10,10,"presse \"RIGHT\" to "); hal_ui_display_txt(app_context.ui,10,18,"do a new run");
+		hal_ui_display_txt(app_context.ui,10,10,"presse \"RIGHT\" to ");
+		hal_ui_display_txt(app_context.ui,10,18,"do a new run 1");
 		hal_ui_refresh(app_context.ui);
 		while(choice==-1)
 		{
@@ -108,28 +135,7 @@ extern int mazeColin(void)
 			}
 		}
 	}while (choice==1);
-	return HAL_UI_E_SUCCESS;
 }
-
-void exploration(labyrinthe *maze, positionRobot* positionZhonx,char xFinish, char yFinish)
-{
-	coordinate way={0,0,0};
-	hal_step_motor_enable();
-	new_cell(see_walls(),maze,*positionZhonx);
-
-	while(positionZhonx->x!=xFinish || positionZhonx->y!=yFinish)
-	{
-		clearMazelength(maze);
-		poids(maze,xFinish, yFinish,true);
-		moveVirtualZhonx(*maze,*positionZhonx,&way,xFinish, yFinish);
-	moveRealZhonx(maze,positionZhonx,way.next,&xFinish,&yFinish);
-	}
-
-	hal_os_sleep(200);
-	//step_motors_move(CELL_LENGTH/2, 0, 0);
-	hal_step_motor_disable();
-}
-
 void moveVirtualZhonx(labyrinthe maze, positionRobot positionZhonxVirtuel,coordinate *way, char xFinish, char yFinish)
 {
 	while(positionZhonxVirtuel.x!=xFinish || positionZhonxVirtuel.y!=yFinish)
@@ -932,36 +938,36 @@ void maze_init (labyrinthe *maze)
 	}
 
 void print_maze(const labyrinthe maze, const int x_robot, const int y_robot)
-	{
+{
 	hal_ui_clear_scr(app_context.ui);
 	int size_cell_on_oled=((63)/MAZE_SIZE);
 	int x,y;
 	for (y=0; y<MAZE_SIZE; y++)
-			{
-			for (x=0; x<MAZE_SIZE; x++)
-					{
-					if (maze.cell[x][y].wall_north == WALL_KNOW)
-							{
-							hal_ui_fill_rect(app_context.ui,x*size_cell_on_oled, y*size_cell_on_oled, size_cell_on_oled+1, 1);
-							}
-					if (maze.cell[x][y].wall_west == WALL_KNOW)
-							{
-							hal_ui_fill_rect(app_context.ui,x*size_cell_on_oled, y*size_cell_on_oled, 1, size_cell_on_oled+1);
-							}
-					if (maze.cell[x][y].wall_south == WALL_KNOW)
-							{
-							hal_ui_fill_rect(app_context.ui,x*size_cell_on_oled, (y+1)*size_cell_on_oled, size_cell_on_oled+1, 1);
-							}
-					if (maze.cell[x][y].wall_east == WALL_KNOW)
-							{
-							hal_ui_fill_rect(app_context.ui,(x+1)*size_cell_on_oled, y*size_cell_on_oled, 1, size_cell_on_oled+1);
-							}
-					}
-			}
+	{
+		for (x=0; x<MAZE_SIZE; x++)
+		{
+		if (maze.cell[x][y].wall_north == WALL_KNOW)
+		{
+			hal_ui_fill_rect(app_context.ui,x*size_cell_on_oled, y*size_cell_on_oled, size_cell_on_oled+1, 1);
+		}
+		if (maze.cell[x][y].wall_west == WALL_KNOW)
+		{
+			hal_ui_fill_rect(app_context.ui,x*size_cell_on_oled, y*size_cell_on_oled, 1, size_cell_on_oled+1);
+		}
+		if (maze.cell[x][y].wall_south == WALL_KNOW)
+		{
+			hal_ui_fill_rect(app_context.ui,x*size_cell_on_oled, (y+1)*size_cell_on_oled, size_cell_on_oled+1, 1);
+		}
+		if (maze.cell[x][y].wall_east == WALL_KNOW)
+		{
+			hal_ui_fill_rect(app_context.ui,(x+1)*size_cell_on_oled, y*size_cell_on_oled, 1, size_cell_on_oled+1);
+		}
+	}
+}
 	//print_length(maze);
 	hal_ui_fill_rect(app_context.ui,x_robot*size_cell_on_oled, y_robot*size_cell_on_oled, size_cell_on_oled, size_cell_on_oled);
 	hal_ui_refresh(app_context.ui);
-	}
+}
 
 void* calloc_s (size_t nombre, size_t taille)
 	{
@@ -1197,7 +1203,7 @@ void calibrateSimple()
 {
 	hal_step_motor_enable();
 	char orientation=0;
-	unsigned char sensors_state =0;
+	unsigned char sensors_state = 0;
 	for(int i=0; i<2;i++)
 	{
 		sensors_state =hal_sensor_get_state(app_context.sensors);

@@ -33,7 +33,6 @@
 extern int menu_colin(menuItem menu);
 extern menuItem menu_c;
 static int app_initialization(void);
-extern void test_graphyque();
 
 
 app_config app_context;
@@ -48,9 +47,7 @@ int main(void)
     {
         return rv;
     }
-
     //rv = test_hal_motor_encoder();
-    test_graphyque();
     //rv = test_maze_trajectoire();
     //rv = display_main_menu();
     while(1)
