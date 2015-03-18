@@ -92,18 +92,16 @@ menuItem motor_menu=
 		{"Acceleration calib.",'f',		null}
     }
 };
+float toto=10,titi=10,tata=10;
 
 menuItem testGraphicMenu =
 {
     "test graphic menu",
     {
-		{"Initial speed :",'l',			(void*)&zhonx_settings.initial_speed},
-		{"Default accel :",'l',			(void*)&zhonx_settings.default_accel},
-		{"Max speed dist:",'l',			(void*)&zhonx_settings.max_speed_distance},
-		{"Default accel :",'l',			(void*)&zhonx_settings.default_accel},
+		{"Default accel :",'l',			(void*)&toto},
+		{"Max speed dist:",'l',			(void*)&titi},
+		{"Default accel :",'l',			(void*)&tata},
 		{"graphique",'g',null},
-		{"Rotate accel  :",'l',			(void*)&zhonx_settings.rotate_accel},
-		{"Emerg decel   :",'l',			(void*)&zhonx_settings.emergency_decel},
 		{(char*)NULL,	0,				NULL}
     }
 };
@@ -117,10 +115,7 @@ menuItem motion_settings =
 		{"Default accel :",'l',			(void*)&zhonx_settings.default_accel},
 		{"Rotate accel  :",'l',			(void*)&zhonx_settings.rotate_accel},
 		{"Emerg decel   :",'l',			(void*)&zhonx_settings.emergency_decel},
-		{"test1",'f',null},
-		{"test2",'f',null},
-		{"test3",'f',null},
-		{"test4",'f',null}
+		{(char*)NULL,	0,				NULL}
     }
 };
 menuItem PID_settings =
@@ -187,6 +182,7 @@ menuItem menu_c =
 			{"prameters",'m',			(void*)&paramters_menu},
 			{"test menu",'m',			(void*)&tests_menu},
 			{"beeper enabled?",'b',		(void*)&zhonx_settings.beeper_enabled},
+			{"test graph",'m',			(void*)&testGraphicMenu},
 			{(char*)NULL,	0,				NULL}
 		}
 };
@@ -277,7 +273,7 @@ int menu_colin(menuItem menu)
 						menu.line[line_menu].param();
 					break;
 				case 'g':
-					graphMotorSettings(menu.line[line_menu-3].param,menu.line[line_menu-2].param,menu.line[line_menu-1].param);
+					graphMotorSettings((float*)menu.line[line_menu-3].param,(float*)menu.line[line_menu-2].param,(float*)menu.line[line_menu-1].param);
 					break;
 				default:
 					break;
@@ -355,28 +351,96 @@ void affiche_menu(menuItem menu,int line)
 	}
 }
 
-void graphMotorSettings (unsigned long *acceleration, unsigned long *maxSpeed, unsigned long *deceleration)
+void graphMotorSettings (float *acceleration, float *maxSpeed, float *deceleration)
 {
-	printGraphMotor ( *acceleration, *maxSpeed, *deceleration);
-	while(GPIO_ReadInputDataBit(JOYSTICK_RIGHT) != Bit_RESET);
+	int number_value=0;
+	float* values[3]={acceleration,maxSpeed,deceleration};
+	while(true)
+	{
+		printGraphMotor ( *acceleration, *maxSpeed, *deceleration);
+		if (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET)
+		{
+			// Wait until button is released
+			hal_ui_anti_rebonds (JOYSTICK_LEFT);
+			if (number_value <= 0)
+			{
+				return;
+			}
+			else
+			{
+				number_value--;
+			}
+		}
+
+		// Joystick down
+		if (GPIO_ReadInputDataBit(JOYSTICK_DOWN) == Bit_RESET)
+		{
+			hal_ui_anti_rebonds (JOYSTICK_DOWN);
+			*(values[number_value])-=0.5;
+		}
+		// Joystick up
+		if (GPIO_ReadInputDataBit(JOYSTICK_UP) == Bit_RESET)
+		{
+			hal_ui_anti_rebonds (JOYSTICK_UP);
+			*(values[number_value])+=0.5;
+
+		}
+
+		// Validate button
+		if(GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET)
+		{
+			hal_ui_anti_rebonds (JOYSTICK_RIGHT);
+			if (number_value >= 2)
+			{
+				return;
+			}
+			else
+			{
+				number_value++;
+			}
+		}
+	}
 	hal_ui_anti_rebonds(JOYSTICK_RIGHT);
 }
-void printGraphMotor (unsigned long acceleration, unsigned long maxSpeed, unsigned long deceleration)
+
+void printGraphMotor (float acceleration, float maxSpeed, float deceleration)
 {
-	char point1[2]={maxSpeed/acceleration,maxSpeed};
-	char point2[2]={64-maxSpeed/deceleration,maxSpeed};
+	char str[10];
 	ssd1306ClearScreen();
-	ssd1306DrawPixel(0,64);
-	ssd1306DrawPixel(point1[0],point1[1]);
-	ssd1306DrawPixel(point2[0],point2[1]);
-	ssd1306DrawPixel(128,64);
-	ssd1306Refresh();
+	char point1[2]={(char)((0-maxSpeed)/(0-acceleration)),64-(char)maxSpeed};
+	char point2[2]={(char)(128-(0-maxSpeed)/(0-deceleration)),64-(char)(maxSpeed)};
 	ssd1306DrawLine(0,64,point1[0],point1[1]);
-	ssd1306Refresh();
 	ssd1306DrawLine(point1[0],point1[1],point2[0],point2[1]);
+	ssd1306DrawLine(point2[0],point1[1],128,64);
+
+	sprintf(str,"%.2fM.S^2",acceleration);
+	ssd1306DrawString((0+point1[0])/2+2,(64+point1[1])/2+2,str,&Font_3x6);
+
+	sprintf(str,"%.2fM.S",maxSpeed);
+	ssd1306DrawString((point1[0]+point2[0])/2,(point1[1]+point2[1])/2,str,&Font_3x6);
+
+	sprintf(str,"%.2fM.S^2",deceleration);
+	ssd1306DrawString((point2[0]+128)/2-27,(point2[1]+64)/2,str,&Font_3x6);
 	ssd1306Refresh();
-	ssd1306DrawLine(point2[0],point2[1],128,64);
-	ssd1306Refresh();
+}
+listDote* doteGraph (int time, int value)
+{
+	static listDote dotes={0};
+	static listDote *actual_list=NULL;
+	static int x=0;
+
+	if(actual_list==NULL)
+		actual_list=&dotes;
+
+	actual_list->dotes[x]=value;
+
+	x++;
+	if (x%MAX_DOTES==0)
+	{
+		actual_list->next=calloc_s(1,sizeof(listDote));
+		x=0;
+	}
+	return &actual_list;
 }
 //void hal_ui_anti_rebonds (GPIO_TypeDef* gpio, uint16_t gpio_pin)
 //{

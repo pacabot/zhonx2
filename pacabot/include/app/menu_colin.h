@@ -9,6 +9,7 @@
 #define MENU_COLIN_H_
 
 #define MAX_LINE_SCREEN 5
+#define MAX_DOTES 64
 typedef struct {
 char *name;
 char type;
@@ -19,10 +20,15 @@ typedef struct{
 		char *name;
 		lineItem line[20];
 }menuItem;
+typedef struct listDote
+{
+	int dotes [MAX_DOTES];
+	struct listDote *next;
+} listDote;
 int menu_colin(menuItem);
 void menu_animate(unsigned char y, unsigned char max_y);
 void affiche_menu(menuItem menu,int first_line);
-void graphMotorSettings (unsigned long *acceleration, unsigned long *maxSpeed, unsigned long *deceleration);
-void printGraphMotor (unsigned long acceleration, unsigned long maxSpeed, unsigned long deceleration);
+void graphMotorSettings (float *acceleration, float *maxSpeed, float *deceleration);
+void printGraphMotor (float acceleration, float maxSpeed, float deceleration);
 
 #endif /* MENU_COLIN_H_ */

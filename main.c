@@ -33,6 +33,7 @@
 extern int menu_colin(menuItem menu);
 extern menuItem menu_c;
 static int app_initialization(void);
+//extern void testLine2 ();
 
 
 app_config app_context;
@@ -51,6 +52,7 @@ int main(void)
     //rv = test_hal_motor_encoder();
     //rv = test_maze_trajectoire();
     //rv = display_main_menu();
+    //testLine2 ();
     while(1)
     	rv=menu_colin(menu_c);
     //rv = test_hal_beeper();
