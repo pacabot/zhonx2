@@ -18,7 +18,7 @@
 #define WEST 3
 #define FORWARD 0
 #define RIGHT 1
-#define RETURN 2
+#define UTURN 2
 #define LEFT 3
 #define NO_KNOW 0
 #define WALL_KNOW 1
@@ -58,17 +58,18 @@ typedef struct coordinate
 }coordinate;
 typedef struct
 {
-    int x;
-    int y;
-    int orientation;
+    char x;
+    char y;
+    char orientation;
+    bool midOfCase;
 } positionRobot;
 
 
 // fonctions
-int maze(int i, int str);
+extern int mazeColin(void);
 void exploration(labyrinthe *maze, positionRobot* poitionZhonx,char xFinish, char yFinish);
 void moveVirtualZhonx(labyrinthe maze, positionRobot positionZhonxVirtuel,coordinate *way, char xFinish, char yFinish);
-void move_zhonx (int direction_to_go, int *direction_robot, int numberOfCase);
+void move_zhonx (int direction_to_go, char *direction_robot, int numberOfCase);
 void new_cell(inputs new_walls, labyrinthe *maze, positionRobot positionZhonx);
 void new_dot(coordinate **old_dot,int x,int y);
 void poids(labyrinthe *maze, int xFinish, int yfinish, bool wallNoKnow);
@@ -79,11 +80,17 @@ void print_length(const labyrinthe maze);
 void clearMazelength(labyrinthe* maze);
 inputs see_walls ();
 void commande(int dir, int dist);
-bool mini_way_find(labyrinthe *maze, int x_finish, int y_finish);
+bool mini_way_find(labyrinthe *maze,char xStart, char yStart, char xFinish, char yFinish);
 void trajectoire1(char *Tab, int taille);
-void moveRealZhonx(labyrinthe *maze, positionRobot *positionZhonx, coordinate *way);
-void run (labyrinthe *maze,positionRobot *positionZhonx, int xFinish, int yFinish);
+void moveRealZhonx(labyrinthe *maze, positionRobot *positionZhonx, coordinate *way, char *endX, char *endY);
+void run (labyrinthe *maze,positionRobot *positionZhonx, char xFinish, char yFinish);
 void moveRealZhonxArc(labyrinthe *maze, positionRobot *positionZhonx, coordinate *way);
-void move_zhonx_arc (int direction_to_go, int *direction_robot, int numberOfCase);
-
+void move_zhonx_arc (int direction_to_go, positionRobot *positionZhonx, int numberOfCase, bool endMidOfCase);
+void testMoveRealZhonx(labyrinthe *maze, positionRobot *positionZhonx, coordinate *way, char *endX, char *endY);
+void doUTurn(positionRobot *positionZhonx);
+void waitStart(void);
+void goOrientation(char *orientationZhonx, char directionToGo);
+void calibrateSimple();
+bool diffWay(coordinate *way1,coordinate *way2);
+void deletWay(coordinate *way);
 #endif /* RESOLUTION_MAZE_H_ */

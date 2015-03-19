@@ -53,11 +53,11 @@ int test_remote_control(void)
                 printf("Avancer\n");
                 if (direction == 1)
                 {
-                    step_motors_move(100, 0, CHAIN_LEFT | CHAIN_RIGHT);
+                    step_motors_move(100, 0, CHAIN_BEFORE | CHAIN_AFTER);
                 }
                 else
                 {
-                    step_motors_move(100, 0, CHAIN_RIGHT);
+                    step_motors_move(100, 0, CHAIN_AFTER);
                 }
                 direction = 1;
                 break;
@@ -67,11 +67,11 @@ int test_remote_control(void)
                 printf("Reculer\n");
                 if (direction == 2)
                 {
-                    step_motors_move(-100, 0, CHAIN_LEFT | CHAIN_RIGHT);
+                    step_motors_move(-100, 0, CHAIN_BEFORE | CHAIN_AFTER);
                 }
                 else
                 {
-                    step_motors_move(-100, 0, CHAIN_RIGHT);
+                    step_motors_move(-100, 0, CHAIN_AFTER);
                 }
                 direction = 2;
                 break;

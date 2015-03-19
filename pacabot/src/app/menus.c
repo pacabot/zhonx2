@@ -33,30 +33,27 @@
 /* Extern functions */
 extern int test_hal_adc(void);
 extern int test_hal_color_sensor(void);
-extern int test_hal_serial(void);
 extern int test_hal_sensor(void);
-extern int test_hal_beeper(void);
-extern int test_hal_led(void);
-extern int test_hal_ui(void);
+//extern int test_hal_beeper(void);
+//extern int test_hal_led(void);
+//extern int test_hal_ui(void);
 //extern int test_hal_nvm(void);
-extern int test_hal_step_motor(void);
+//extern int test_hal_step_motor(void);
 extern int test_oled1(void);
 extern int test_oled2(void);
 extern int test_oled3(void);
 extern int test_step_motor_driver(void);
-extern int test_remote_control(void);
+//extern int test_remote_control(void);
 extern int test_motor_rotate(void);
 extern int distance_cal(void);
-extern int test_maze_trajectoire(void);
 extern int maze(int i, int str);
 
 extern int sensor_calibrate(void);
-extern void run_trajectory(int trajectory_nb);
 
 /********************
  * Extern variables *
  ********************/
-extern char _ChaineCommande[(MAZE_MAX_SIZE * MAZE_MAX_SIZE) / 4];
+//extern char _ChaineCommande[(MAZE_MAX_SIZE * MAZE_MAX_SIZE) / 4];
 
 /********************
  * Global variables *

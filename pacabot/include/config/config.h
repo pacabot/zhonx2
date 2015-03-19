@@ -69,7 +69,7 @@
 /* Added frequency at each step for acceleration and deceleration */
 #define DEFAULT_ACCEL               (5)//4
 /* Acceleration value for angular movement */
-#define ROTATE_ACCEL                (6)//4
+#define ROTATE_ACCEL                (5)//4
 /* Deceleration value for emergency stop */
 #define EMERGENCY_DECEL             (50)
 /* Correction 1/P factor */

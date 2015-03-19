@@ -13,8 +13,8 @@
 #define STEP_MOTOR_DRIVER_E_ERROR    MAKE_ERROR(STEP_MOTOR_DRIVER_MODULE_ID, 1)
 
 /* Driver definitions */
-#define CHAIN_LEFT  0x01
-#define CHAIN_RIGHT 0x02
+#define CHAIN_BEFORE  0x01
+#define CHAIN_AFTER 0x02
 
 /* Exported functions */
 
@@ -35,9 +35,9 @@ int step_motors_init(void);
  * @param[in]   sensor_condition    an exit condition of the function, even if
  *                                  the trajectory was not completed.
  * @param[in]   chain               to chain the trajectory. Can be a bitwise OR of:
- *                                  @arg CHAIN_LEFT  indicates that the acceleration
+ *                                  @arg CHAIN_BEFORE  indicates that the acceleration
  *                                                   is not needed.
- *                                  @arg CHAIN_RIGHT indicates that the deceleration
+ *                                  @arg CHAIN_AFTER indicates that the deceleration
  *                                                   is not needed.
  *
  * @retval      STEP_MOTOR_DRIVER_E_SUCCESS if operation was successful

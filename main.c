@@ -33,7 +33,6 @@
 extern int menu_colin(menuItem menu);
 extern menuItem menu_c;
 static int app_initialization(void);
-//extern void testLine2 ();
 
 
 app_config app_context;
@@ -52,7 +51,6 @@ int main(void)
     //rv = test_hal_motor_encoder();
     //rv = test_maze_trajectoire();
     //rv = display_main_menu();
-    //testLine2 ();
     while(1)
     	rv=menu_colin(menu_c);
     //rv = test_hal_beeper();
@@ -83,8 +81,9 @@ int app_initialization(void)
     zhonx_settings.correction_i = CORRECTION_I;
     zhonx_settings.max_correction = MAX_CORRECTION;
     zhonx_settings.calibration_enabled = false;
-    zhonx_settings.color_sensor_enabled = true;
-    zhonx_settings.threshold_color = 40000;
+    zhonx_settings.color_sensor_enabled = false;
+    zhonx_settings.threshold_color = 142003;
+    zhonx_settings.threshold_greater=true;
     zhonx_settings.x_finish_maze=7;
     zhonx_settings.y_finish_maze=7;
     rv = hal_os_init();

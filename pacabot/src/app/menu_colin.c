@@ -45,7 +45,6 @@
 extern void hal_ui_anti_rebonds (GPIO_TypeDef* gpio, uint16_t gpio_pin);
 extern int test_hal_adc(void);
 extern int test_hal_color_sensor(void);
-extern int test_hal_serial(void);
 extern int test_hal_sensor(void);
 extern int test_hal_beeper(void);
 extern int test_hal_led(void);
@@ -56,14 +55,12 @@ extern int test_oled1(void);
 extern int test_oled2(void);
 extern int test_oled3(void);
 extern int test_step_motor_driver(void);
-extern int test_remote_control(void);
 extern int test_motor_rotate(void);
 extern int distance_cal(void);
-extern int test_maze_trajectoire(void);
-extern int maze(int i, int str);
+extern int mazeColin(void);
+extern void calibrateSimple(void);
 
 extern int sensor_calibrate(void);
-//extern void run_trajectory(int trajectory_nb);
 extern void* calloc_s (size_t nombre, size_t taille);
 
 extern app_config app_context;
@@ -72,13 +69,15 @@ menuItem maze_menu =
 {
 		"maze menu",
 		{
-				{"New maze",'f',			(void*)&maze},
+				{"New maze",'f',			(void*)&mazeColin},
 				{"x finish",'i',			(void*)&zhonx_settings.x_finish_maze},
 				{"y finish",'i',			(void*)&zhonx_settings.y_finish_maze},
 				{"color finish",'b',		(void*)&zhonx_settings.color_sensor_enabled},
-				{"calib. enabled",'b',		(void*)&zhonx_settings.calibration_enabled}
+				{"calib. enabled",'b',		(void*)&zhonx_settings.calibration_enabled},
+				{"calibration",'f',			(void*)calibrateSimple},
 //				{"Trajectory...",'f',		&trajectory_menu},
 //				{"Restore maze",            &restore_maze_menu}
+				{(char*)NULL,	0,				NULL}
 		}
 };
 menuItem motor_menu=
@@ -89,7 +88,8 @@ menuItem motor_menu=
 		{"Rotate calib.",'f',			test_motor_rotate},
 		{"Distance calib.",'f',			distance_cal},
 		{"Stepper motor move",'f',		test_step_motor_driver},
-		{"Acceleration calib.",'f',		null}
+		{"Test moteur",'f',		test_hal_step_motor},
+		{(char*)NULL,	0,				NULL}
     }
 };
 float toto=10,titi=10,tata=10;
@@ -170,6 +170,8 @@ menuItem tests_menu=
 				{"Test OLED",'m',				(void*)&oled_menu},
 				{"Test motor",'m',				(void*)&motor_menu},
 				{"Test sensor",'f',				test_hal_sensor},
+				{"Test LEDs",'f',				test_hal_led},
+				{"Test OLEDs",'f',				test_hal_ui},
 				{"Test color sensor",'f',		test_hal_color_sensor},
 				{(char*)NULL,	0,				NULL}
 		}
@@ -333,6 +335,8 @@ void affiche_menu(menuItem menu,int line)
 					ssd1306PrintInt(90,10*i+10," ",*((unsigned long*)menu.line[i+line].param),&Font_3x6);
 					break;
 				case 'f':
+					hal_ui_display_txt(app_context.ui,110,i*10+10,"->");
+					break;
 				case 'm':
 					hal_ui_display_txt(app_context.ui,115,i*10+10,">");
 					break;
