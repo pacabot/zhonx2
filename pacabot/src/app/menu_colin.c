@@ -63,8 +63,8 @@ extern int test_maze_trajectoire(void);
 extern int maze(int i, int str);
 
 extern int sensor_calibrate(void);
-extern void run_trajectory(int trajectory_nb);
-
+//extern void run_trajectory(int trajectory_nb);
+extern void* calloc_s (size_t nombre, size_t taille);
 
 extern app_config app_context;
 
@@ -440,7 +440,7 @@ listDote* doteGraph (int time, int value)
 		actual_list->next=calloc_s(1,sizeof(listDote));
 		x=0;
 	}
-	return &actual_list;
+	return actual_list;
 }
 //void hal_ui_anti_rebonds (GPIO_TypeDef* gpio, uint16_t gpio_pin)
 //{

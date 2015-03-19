@@ -9,7 +9,7 @@
 #define MENU_COLIN_H_
 
 #define MAX_LINE_SCREEN 5
-#define MAX_DOTES 64
+#define MAX_DOTES 300
 typedef struct {
 char *name;
 char type;
