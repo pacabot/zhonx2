@@ -56,7 +56,7 @@ extern int mazeColin(void)
 	positionZhonx.midOfCase=true;
 	posXStart=positionZhonx.x;
 	posYStart=positionZhonx.y;
-	print_maze(maze,positionZhonx.x,positionZhonx.y);
+ 	print_maze(maze,positionZhonx.x,positionZhonx.y);
 	if (zhonx_settings.calibration_enabled==true)
 	{
 		hal_os_sleep(1000);
@@ -65,7 +65,6 @@ extern int mazeColin(void)
 
 	do
 	{
-		hal_os_sleep(2000);
 		waitStart();
 		exploration(&maze, &positionZhonx,zhonx_settings.x_finish_maze,zhonx_settings.y_finish_maze);
 		if (zhonx_settings.calibration_enabled==true)
@@ -75,8 +74,11 @@ extern int mazeColin(void)
 		if (zhonx_settings.calibration_enabled==true)
 						calibrateSimple();
 		doUTurn(&positionZhonx);
-		} while(mini_way_find(&maze,posXStart,posYStart, zhonx_settings.x_finish_maze, zhonx_settings.y_finish_maze));
-
+		hal_os_sleep(2000);
+	} while(false == mini_way_find(&maze,posXStart,posYStart, zhonx_settings.x_finish_maze, zhonx_settings.y_finish_maze));
+	waitStart();
+	run1(&maze,&positionZhonx,posXStart,posYStart);
+	run2(&maze,&positionZhonx,posXStart,posYStart);
 	return HAL_UI_E_SUCCESS;
 }
 
@@ -91,7 +93,7 @@ void exploration(labyrinthe *maze, positionRobot* positionZhonx,char xFinish, ch
 		clearMazelength(maze);
 		poids(maze,xFinish, yFinish,true);
 		moveVirtualZhonx(*maze,*positionZhonx,&way,xFinish, yFinish);
-	moveRealZhonx(maze,positionZhonx,way.next,&xFinish,&yFinish);
+		moveRealZhonx(maze,positionZhonx,way.next,&xFinish,&yFinish);
 	}
 	hal_os_sleep(200);
 	hal_step_motor_disable();
@@ -115,6 +117,49 @@ void run1(labyrinthe *maze, positionRobot *positionZhonx,char posXStart, char po
 		hal_ui_clear_scr(app_context.ui);
 		hal_ui_display_txt(app_context.ui,10,10,"presse \"RIGHT\" to ");
 		hal_ui_display_txt(app_context.ui,10,18,"do a new run 1");
+		hal_ui_refresh(app_context.ui);
+		while(choice==-1)
+		{
+			 if (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_11) != Bit_SET)
+			{
+				// Wait until button is released
+				while (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_11) != Bit_SET);
+				hal_os_sleep(200);
+				choice=1;
+			}
+
+			if (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_8) != Bit_SET)
+			{
+				// Wait until button is released
+				while (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_11) != Bit_SET);
+				hal_os_sleep(200);
+				choice=0;
+			}
+		}
+	}while (choice==1);
+}
+void run2(labyrinthe *maze, positionRobot *positionZhonx,char posXStart, char posYStart)
+{
+	coordinate way;// = {0,0,NULL);
+	char choice;
+	do
+	{
+		choice=-1;
+		moveVirtualZhonx(*maze,*positionZhonx,&way,zhonx_settings.x_finish_maze,zhonx_settings.y_finish_maze);
+		waitStart();
+		hal_step_motor_enable();
+		moveRealZhonxArc(maze,positionZhonx,way.next);
+		hal_step_motor_disable();
+		if (zhonx_settings.calibration_enabled==true)
+				calibrateSimple();
+		hal_os_sleep(2000);
+		exploration(maze, positionZhonx,posXStart,posYStart);
+		if (zhonx_settings.calibration_enabled==true)
+				calibrateSimple();
+		doUTurn(positionZhonx);
+		hal_ui_clear_scr(app_context.ui);
+		hal_ui_display_txt(app_context.ui,10,10,"presse \"RIGHT\" to ");
+		hal_ui_display_txt(app_context.ui,10,18,"do a new run 2");
 		hal_ui_refresh(app_context.ui);
 		while(choice==-1)
 		{
@@ -527,7 +572,7 @@ void new_cell(inputs new_walls, labyrinthe *maze,positionRobot positionZhonx)
 				maze->cell[positionZhonx.x][positionZhonx.y].wall_south=new_walls.front;
 				maze->cell[positionZhonx.x][positionZhonx.y].wall_west=new_walls.right;
 				maze->cell[positionZhonx.x][positionZhonx.y].wall_east=new_walls.left;
-				if(positionZhonx.y<(MAZE_MAX_SIZE-1))
+				if(positionZhonx.y<(MAZE_SIZE-1))
 					maze->cell[positionZhonx.x][positionZhonx.y+1].wall_north=new_walls.front;
 				if(positionZhonx.x>0)
 					maze->cell[positionZhonx.x-1][positionZhonx.y].wall_east=new_walls.right;
@@ -1054,7 +1099,6 @@ inputs see_walls ()
 
 bool mini_way_find(labyrinthe *maze,char xStart, char yStart, char xFinish, char yFinish)
 {
-	// TODO ne pas comparer les distance mais les chemins --> normalement fait : a vérifier
 	// TODO trouver non pas le chemain le plus court mais le chemain le plus rapide
 	coordinate *way1=null;
 	coordinate *way2=null;

@@ -59,6 +59,7 @@ extern int test_motor_rotate(void);
 extern int distance_cal(void);
 extern int mazeColin(void);
 extern void calibrateSimple(void);
+extern void test1Bezier(void);
 
 extern int sensor_calibrate(void);
 extern void* calloc_s (size_t nombre, size_t taille);
@@ -165,6 +166,7 @@ menuItem tests_menu=
 {
 		"test menu",
 		{
+				{"test bezier",'f',				test1Bezier},
 				{"Test ADC",'f',				test_hal_adc},
 				{"Test beeper",'f',				test_hal_beeper},
 				{"Test OLED",'m',				(void*)&oled_menu},
