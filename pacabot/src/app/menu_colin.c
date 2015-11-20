@@ -57,7 +57,7 @@ extern int test_oled3(void);
 extern int test_step_motor_driver(void);
 extern int test_motor_rotate(void);
 extern int distance_cal(void);
-extern int mazeColin(void);
+extern int maze(void);
 extern void calibrateSimple(void);
 extern void test1Bezier(void);
 
@@ -70,7 +70,7 @@ menuItem maze_menu =
 {
 		"maze menu",
 		{
-				{"New maze",'f',			(void*)&mazeColin},
+				{"New maze",'f',			(void*)&maze},
 				{"x finish",'i',			(void*)&zhonx_settings.x_finish_maze},
 				{"y finish",'i',			(void*)&zhonx_settings.y_finish_maze},
 				{"color finish",'b',		(void*)&zhonx_settings.color_sensor_enabled},

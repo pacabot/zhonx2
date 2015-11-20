@@ -19,6 +19,8 @@
 #define TIMER_CH3   2
 #define TIMER_CH4   3
 
+#define ZHONX2
+
 
 /***********************************************************************
  *                      Stepper motors definitions                     *

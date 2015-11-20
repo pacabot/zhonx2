@@ -14,6 +14,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "stdarg.h"
 
 #include "stm32f4xx_gpio.h"
 #include "stm32f4xx_rcc.h"
@@ -475,6 +476,18 @@ void ssd1306PrintInt(unsigned int x, unsigned int y, const char *text, unsigned 
     ssd1306DrawString(x, y, text, font);
     ssd1306DrawString(x + ((nb_char + 1) * font->u8Width), y, str, font);
 }
+void ssd1306Printf(int x, int y, const FONT_DEF *font, const char *format, ...)
+{
+	char temp_buffer[43];
+	va_list va_args;
+
+	va_start(va_args, format);
+	vsnprintf(temp_buffer, 43, format, va_args);
+	va_end(va_args);
+
+	ssd1306DrawString(x,y,(char *)temp_buffer, font);
+}
+
 /**************************************************************************/
 /*!
     @brief  Shifts the contents of the frame buffer up the specified
@@ -728,6 +741,50 @@ void ssd1306DrawRect(unsigned char x, unsigned char y, unsigned char w, unsigned
 		ssd1306DrawPixel(x+w-1, i);
 	}
 }
+
+void ssd1306DrawDashedLine(unsigned char x0, unsigned char y0, unsigned char x1, unsigned char y1)
+{
+	uint8_t steep = abs(y1 - y0) > abs(x1 - x0);
+	if (steep) {
+		swap(x0, y0);
+		swap(x1, y1);
+	}
+
+	if (x0 > x1) {
+		swap(x0, x1);
+		swap(y0, y1);
+	}
+
+	uint8_t dx, dy;
+	dx = x1 - x0;
+	dy = abs(y1 - y0);
+
+	int8_t err = dx / 2;
+	int8_t ystep;
+
+	if (y0 < y1) {
+		ystep = 1;
+	} else {
+		ystep = -1;}
+
+	for (; x0<x1; x0++) {
+		if (steep)
+		{
+			if ((x0 % 2) == 0)
+				ssd1306DrawPixel(y0, x0);
+		} else
+		{
+			if ((x0 % 2) == 0)
+				ssd1306DrawPixel(x0, y0);
+		}
+		err -= dy;
+		if (err < 0) {
+			y0 += ystep;
+			err += dx;
+		}
+	}
+}
+
 /**************************************************************************/
 // bresenham's algorithm - thx wikpedia
 void ssd1306DrawLine(unsigned char x0, unsigned char y0, unsigned char x1, unsigned char y1)

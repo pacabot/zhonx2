@@ -2,6 +2,13 @@
 
 #ifndef __APP_DEF_H__
 #define __APP_DEF_H__
+#include "hal/hal_adc.h"
+#include "hal/hal_beeper.h"
+#include "hal/hal_led.h"
+#include "hal/hal_nvm.h"
+#include "hal/hal_serial.h"
+#include "hal/hal_sensor.h"
+#include "hal/hal_ui.h"
 
 typedef struct
 {
