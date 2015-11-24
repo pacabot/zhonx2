@@ -19,6 +19,6 @@ void move_zhonx_arc (int direction_to_go, positionRobot *positionZhonx, int numb
 extern positionRobot *pt_zhonx_position;
 int rotate90WithCal(int rotation_type, float max_speed, float end_speed);
 void calibrateSimple();
-void moveRealZhonx (int direction_to_go, char *direction_robot, int numberOfCase);
+void move_zhonx (int direction_to_go, positionRobot *positionZhonx, int numberOfCase);
 
 #endif /* ROBOTINTERFACE_H_ */

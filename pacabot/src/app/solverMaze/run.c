@@ -7,7 +7,9 @@
 
 #include "config/basetypes.h"
 #include "stm32f4xx_gpio.h"
+#include "config/config.h"
 #include "hal/hal_os.h"
+#include "hal/hal_step_motor.h"
 /* peripherale inlcudes*/
 #include "stm32f4xx.h"
 #include "oled/ssd1306.h"
@@ -26,11 +28,13 @@ void run1(labyrinthe *maze, positionRobot *positionZhonx, coordinate start_oordi
 		choice = -1;
 		clearMazelength(maze);
 		poids(maze, end_coordinate, false);
+		hal_step_motor_enable();
 		moveVirtualZhonx(*maze, *positionZhonx, way, end_coordinate);
 		waitStart ();
 		moveRealZhonxArc(maze, positionZhonx, way);
 		goToPosition(maze,positionZhonx,start_oordinate);
 		doUTurn (positionZhonx);
+		hal_step_motor_enable();
 
 		ssd1306ClearScreen ();
 		ssd1306DrawString (10, 10, "presse \"RIGHT\" to ", &Font_5x8);
@@ -63,12 +67,12 @@ void run2(labyrinthe *maze, positionRobot *positionZhonx, coordinate start_oordi
 		waitStart ();
 		moveVirtualZhonx (*maze, *positionZhonx, way, end_coordinate);
 		moveRealZhonxArc (maze, positionZhonx, way);
-//		if (zhonxSettings.calibration_enabled == true)
-//			calibrateSimple ();
+		if (zhonx_settings.calibration_enabled == true)
+			calibrateSimple ();
 		hal_os_sleep(2000);
-		//exploration (maze, positionZhonx, start_oordinate);
-//		if (zhonxSettings.calibration_enabled == true)
-//			calibrateSimple ();
+		goToPosition(maze,positionZhonx,start_oordinate);
+		if (zhonx_settings.calibration_enabled == true)
+			calibrateSimple ();
 		doUTurn (positionZhonx);
 		ssd1306ClearScreen ();
 		ssd1306DrawString (10, 10, "presse \"RIGHT\" to ", &Font_5x8);

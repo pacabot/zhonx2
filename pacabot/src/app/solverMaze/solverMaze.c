@@ -12,6 +12,7 @@
 /* meddleware include */
 #include "hal/hal_sensor.h"
 #include "hal/hal_os.h"
+#include "hal/hal_step_motor.h"
 #include "app/app_def.h"
 
 /*application include */
@@ -35,7 +36,7 @@ int maze(void)
 
 	positionZhonx.cordinate.x = 8;
 	positionZhonx.cordinate.y = 8; // the robot start in the corner
-	positionZhonx.orientation = EAST;
+	positionZhonx.orientation = NORTH;
 	/*end of initialization for different micromouse competition*/
 	positionZhonx.midOfCell = false;
 	start_coordinate.x = positionZhonx.cordinate.x;
@@ -55,9 +56,10 @@ int maze(void)
 	#endif
 	waitStart ();
 	exploration (&maze, &positionZhonx, &end_coordinate);
+	hal_os_sleep(2000);
 	goToPosition (&maze, &positionZhonx, start_coordinate);
-
 	doUTurn (&positionZhonx);
+	hal_os_sleep(2000);
 	#ifdef ZHONX3
 	move (0, -CELL_LENGTH/2, 50, 0);
 	#endif
@@ -90,24 +92,22 @@ void exploration(labyrinthe *maze, positionRobot* positionZhonx,  coordinate *en
 	positionRobot start_position;
 	int rv = MAZE_SOLVER_E_SUCCESS;
 	coordinate way[MAZE_SIZE*MAZE_SIZE] = {{-1,-1},{END_OF_LIST,END_OF_LIST}};
-	coordinate last_coordinate, start_coordinate;
-	start_coordinate = positionZhonx->cordinate;
-	start_position.cordinate = start_coordinate;
-	start_position.orientation = NORTH;
-	poids (maze, start_coordinate, true);
+	coordinate last_coordinate;
+	start_position = *positionZhonx;
+	poids (maze, start_position.cordinate, true);
 	while ( findArrival(*maze, end_coordinate) != MAZE_SOLVER_E_SUCCESS)
 	{
 		goToPosition(maze, positionZhonx, *end_coordinate);
 		clearMazelength(maze);
-		poids (maze, start_coordinate, true);
+		poids (maze, start_position.cordinate, true);
 	}
-#ifdef ZHONX2
-	if (zhonx_settings.calibration_enabled==true)
-	{
-		hal_os_sleep(1000);
-		calibrateSimple();
-	}
-#endif
+	#ifdef ZHONX2
+		if (zhonx_settings.calibration_enabled==true)
+		{
+			hal_os_sleep(1000);
+			calibrateSimple();
+		}
+	#endif
 	last_coordinate = findEndCoordinate(way);
 	do
 	{
@@ -145,7 +145,7 @@ int goToPosition(labyrinthe *maze, positionRobot* positionZhonx,  coordinate end
 			// no solution for go to the asked position
 			return rv;
 		}
-		moveRealZhonx (maze, positionZhonx, way);
+		moveRealZhonxArc(maze, positionZhonx, way);
 	}
 	return MAZE_SOLVER_E_SUCCESS;
 }
@@ -265,7 +265,7 @@ void moveRealZhonxArc(labyrinthe *maze, positionRobot *positionZhonx, coordinate
 			chain = false;
 		else
 			chain = true;
-		move_zhonx_arc (orientaionToGo, positionZhonx, length, chain, chain);
+		move_zhonx (orientaionToGo, positionZhonx, length);
 		cell_state = getCellState ();
 		newCell (cell_state, maze, *positionZhonx);
 

@@ -34,16 +34,37 @@ void goOrientation(char *orientationZhonx, char directionToGo)
 			break;
 	}
 }
+
+void move_zhonx (int direction_to_go, positionRobot *positionZhonx, int numberOfCase)
+{
+	int turn=(4 + direction_to_go- positionZhonx->orientation) % 4;
+	positionZhonx->orientation = direction_to_go;
+	switch (turn)
+	{
+		case FORWARD :
+			break;
+		case RIGHT :
+				//step_motors_rotate(-90, 90, CHAIN_BEFORE | CHAIN_AFTER);
+	//			step_motors_rotate(-90, 90, 0);
+				step_motors_rotate_in_place(-90);
+				break;
+		case UTURN :
+				step_motors_rotate_in_place(180);
+				break;
+		case LEFT :
+//				step_motors_rotate(90, 90, 0);
+				step_motors_rotate_in_place(90);
+
+			break;
+	}
+//	step_motors_move(CELL_LENGTH*numberOfCase, 0, CHAIN_BEFORE | CHAIN_AFTER);
+	step_motors_move(CELL_LENGTH*numberOfCase, 0, 0);
+}
+
 void move_zhonx_arc (int direction_to_go, positionRobot *positionZhonx, int numberOfCase, char endMidOfCase, char chain)
 {
-	chain = CHAIN_AFTER;
 	int distanceToMove=CELL_LENGTH*numberOfCase;
 	int turn=(4+direction_to_go-positionZhonx->orientation)%4;
-
-	if (positionZhonx->midOfCell == false)
-	{
-		chain=chain|CHAIN_BEFORE;
-	}
 
 	positionZhonx->orientation=direction_to_go;
 	switch (turn)
@@ -148,7 +169,7 @@ void newCell(walls new_walls, labyrinthe *maze, positionRobot positionZhonx)
 	switch (positionZhonx.orientation)
 	{
 		case NORTH :
-			if(positionZhonx.midOfCell == false)
+			if(positionZhonx.midOfCell == true)
 			{
 				maze->cell[(int) (positionZhonx.cordinate.x)][(int) (positionZhonx.cordinate.y)].wall_east = new_walls.right;
 				maze->cell[(int) (positionZhonx.cordinate.x)][(int) (positionZhonx.cordinate.y)].wall_west = new_walls.left;
@@ -166,7 +187,7 @@ void newCell(walls new_walls, labyrinthe *maze, positionRobot positionZhonx)
 
 		case EAST :
 
-				if(positionZhonx.midOfCell == false)
+				if(positionZhonx.midOfCell == true)
 				{
 					maze->cell[(int) (positionZhonx.cordinate.x)][(int) (positionZhonx.cordinate.y)].wall_south = new_walls.right;
 					maze->cell[(int) (positionZhonx.cordinate.x)][(int) (positionZhonx.cordinate.y)].wall_north = new_walls.left;
@@ -184,7 +205,7 @@ void newCell(walls new_walls, labyrinthe *maze, positionRobot positionZhonx)
 
 		case SOUTH :
 
-			if(positionZhonx.midOfCell == false)
+			if(positionZhonx.midOfCell == true)
 			{
 				maze->cell[(int) (positionZhonx.cordinate.x)][(int) (positionZhonx.cordinate.y)].wall_west = new_walls.right;
 				maze->cell[(int) (positionZhonx.cordinate.x)][(int) (positionZhonx.cordinate.y)].wall_east = new_walls.left;
@@ -201,7 +222,7 @@ void newCell(walls new_walls, labyrinthe *maze, positionRobot positionZhonx)
 			break;
 
 		case WEST :
-			if(positionZhonx.midOfCell == false)
+			if(positionZhonx.midOfCell == true)
 			{
 				maze->cell[(int) (positionZhonx.cordinate.x)][(int) (positionZhonx.cordinate.y)].wall_north = new_walls.right;
 				maze->cell[(int) (positionZhonx.cordinate.x)][(int) (positionZhonx.cordinate.y)].wall_south = new_walls.left;
@@ -261,30 +282,4 @@ void calibrateSimple()
 	goOrientation(&orientation,0);
 	hal_os_sleep(100);
 	hal_step_motor_disable();
-}
-
-void moveRealZhonx (int direction_to_go, char *direction_robot, int numberOfCase)
-{
-	int turn=(4+direction_to_go-*direction_robot)%4;
-	*direction_robot=direction_to_go;
-	switch (turn)
-	{
-		case FORWARD :
-			break;
-		case RIGHT :
-				//step_motors_rotate(-90, 90, CHAIN_BEFORE | CHAIN_AFTER);
-	//			step_motors_rotate(-90, 90, 0);
-				step_motors_rotate_in_place(-90);
-				break;
-		case UTURN :
-				step_motors_rotate_in_place(180);
-				break;
-		case LEFT :
-//				step_motors_rotate(90, 90, 0);
-				step_motors_rotate_in_place(90);
-
-			break;
-	}
-//	step_motors_move(CELL_LENGTH*numberOfCase, 0, CHAIN_BEFORE | CHAIN_AFTER);
-	step_motors_move(CELL_LENGTH*numberOfCase, 0, 0);
 }
