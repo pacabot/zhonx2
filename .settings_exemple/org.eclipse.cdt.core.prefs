@@ -1,0 +1,8 @@
+eclipse.preferences.version=1
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1581131621/append=true
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1581131621/appendContributed=true
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.1127627694/PATH/delimiter=\:
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.1127627694/PATH/operation=replace
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.1127627694/PATH/value=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/usr/games\:/usr/local/games;C\:\\Eclipse-ARM\\gcc-4_8-2014\\bin;C\:\\Eclipse-ARM\\GnuWin32;C\:\\Eclipse-ARM\\openocd-0.8.0\\bin-x64
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.1127627694/append=true
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.1127627694/appendContributed=true
