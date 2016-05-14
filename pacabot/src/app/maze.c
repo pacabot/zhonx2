@@ -109,7 +109,7 @@ static int wait_validation(unsigned long timeout)
         {
             // Wait until button is released
             while (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_11) != Bit_SET);
-            hal_os_sleep(200);
+            HAL_Delay(200);
             return 0;
         }
 
@@ -117,7 +117,7 @@ static int wait_validation(unsigned long timeout)
         {
             // Wait until button is released
             while (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_11) != Bit_SET);
-            hal_os_sleep(200);
+            HAL_Delay(200);
             return -2;
         }
     } while (timeout > hal_os_get_systicks());
@@ -154,14 +154,14 @@ int sensor_calibrate(void)
         	for (i=0; i<100;i++)
         	{
         		arrival_color+=hal_sensor_get_color(app_context.sensors);
-        		hal_os_sleep(50);
+        		HAL_Delay(50);
         	}
         	arrival_color/=i;
             sprintf(str, "Value %i validated", arrival_color);
             hal_ui_clear_scr(app_context.ui);
             hal_ui_display_txt(app_context.ui, 2, 9, str);
             hal_ui_refresh(app_context.ui);
-            hal_os_sleep(1000);
+            HAL_Delay(1000);
             break;
         }
         else if (rv == -2)
@@ -170,7 +170,7 @@ int sensor_calibrate(void)
             hal_ui_clear_scr(app_context.ui);
             hal_ui_display_txt(app_context.ui, 2, 9, "Calibration aborted");
             hal_ui_refresh(app_context.ui);
-            hal_os_sleep(1000);
+            HAL_Delay(1000);
             return 0;
         }
     }
@@ -196,27 +196,27 @@ int sensor_calibrate(void)
         	for (i=0; i<100;i++)
         	{
         		area_color+=hal_sensor_get_color(app_context.sensors);
-        		hal_os_sleep(50);
+        		HAL_Delay(50);
         	}
         	area_color/=i;
             sprintf(str, "Value %i validated", area_color);
             hal_ui_clear_scr(app_context.ui);
             hal_ui_display_txt(app_context.ui, 2, 9, str);
             hal_ui_refresh(app_context.ui);
-            hal_os_sleep(1000);
+            HAL_Delay(1000);
             break;
         }
     }
 
-    zhonx_settings.threshold_color = (MAX(arrival_color, area_color) - \
+    zhonxSettings.threshold_color = (MAX(arrival_color, area_color) - \
                                       MIN(arrival_color, area_color)) / 2;
-    sprintf(str,"diff coul : %d",zhonx_settings.threshold_color);
+    sprintf(str,"diff coul : %d",zhonxSettings.threshold_color);
     hal_ui_clear_scr(app_context.ui);
     hal_ui_display_txt(app_context.ui,1,1,str);
     hal_ui_refresh(app_context.ui);
-    hal_os_sleep(2000);
-    zhonx_settings.threshold_color += MIN(arrival_color, area_color);
-    zhonx_settings.threshold_greater = (arrival_color > area_color);
+    HAL_Delay(2000);
+    zhonxSettings.threshold_color += MIN(arrival_color, area_color);
+    zhonxSettings.threshold_greater = (arrival_color > area_color);
 
     return 0;
 }
@@ -251,7 +251,7 @@ extern int mazeBertrand(int i, int str)
     hal_ui_clear_scr(app_context.ui);
     hal_ui_display_txt(app_context.ui, 13, 1, "POSITIONNER");
     hal_ui_refresh(app_context.ui);
-	hal_os_sleep(2000);
+	HAL_Delay(2000);
 
     //Reconnaissance du labyrinthe
     //----------------------------
@@ -411,18 +411,18 @@ static int parcours(char table[][MAZE_MAX_SIZE], unsigned char X,
 
     // est-on sur la case de fin ?
     //---------------------------------------------------------------------------------------------------
-    if (zhonx_settings.color_sensor_enabled)
+    if (zhonxSettings.color_sensor_enabled)
     {
-        if (zhonx_settings.threshold_greater)
+        if (zhonxSettings.threshold_greater)
         {
             // Threshold color value is bigger than current value
-            if (hal_sensor_get_color(app_context.sensors) > zhonx_settings.threshold_color)
+            if (hal_sensor_get_color(app_context.sensors) > zhonxSettings.threshold_color)
             {
                 _ChaineCommande[_increment + 1] = sens;
                 return (_increment + 1);
             }
         }
-        else if (hal_sensor_get_color(app_context.sensors) < zhonx_settings.threshold_color)
+        else if (hal_sensor_get_color(app_context.sensors) < zhonxSettings.threshold_color)
         {
             // Threshold color value is smaller than current value
             _ChaineCommande[_increment + 1] = sens;
@@ -697,16 +697,16 @@ static int robot_calibration(char table[][MAZE_MAX_SIZE],
     unsigned int    backup_sens = *sens;
 
     // Save current settings
-    memcpy(&backup_settings, &zhonx_settings, sizeof(robot_settings));
+    memcpy(&backup_settings, &zhonxSettings, sizeof(robot_settings));
 
-    if (zhonx_settings.calibration_enabled == false)
+    if (zhonxSettings.calibration_enabled == false)
     {
         /* Calibration is disabled */
 
         if (setPos == true)
         {
-            zhonx_settings.initial_speed = 3000;
-            zhonx_settings.max_speed_distance = 20;
+            zhonxSettings.initial_speed = 3000;
+            zhonxSettings.max_speed_distance = 20;
 
             getPosition(x, y, *sens, table);
             display(table, 20, *sens);
@@ -718,14 +718,14 @@ static int robot_calibration(char table[][MAZE_MAX_SIZE],
             display(table, 20, *sens);
 
             // Restore previous settings
-            memcpy(&zhonx_settings, &backup_settings, sizeof(robot_settings));
+            memcpy(&zhonxSettings, &backup_settings, sizeof(robot_settings));
         }
 
         return 0;
     }
 
-    zhonx_settings.initial_speed = 1500;
-    zhonx_settings.max_speed_distance = 1;
+    zhonxSettings.initial_speed = 1500;
+    zhonxSettings.max_speed_distance = 1;
 
     hal_ui_clear_scr(app_context.ui);
 
@@ -759,7 +759,7 @@ static int robot_calibration(char table[][MAZE_MAX_SIZE],
     }
 
     // Restore previous settings
-    memcpy(&zhonx_settings, &backup_settings, sizeof(robot_settings));
+    memcpy(&zhonxSettings, &backup_settings, sizeof(robot_settings));
     *sens = backup_sens;
 
     return 0;
@@ -789,7 +789,7 @@ static int calibrate(int direction, bool setPos, char table[][MAZE_MAX_SIZE],
         case NORD:
             sensors_state = hal_sensor_get_state(app_context.sensors);
             step_motors_basic_move(70);
-            hal_os_sleep(500);
+            HAL_Delay(500);
             step_motors_basic_move(-(168 / 4));
             calibrated++;
             break;
@@ -805,7 +805,7 @@ static int calibrate(int direction, bool setPos, char table[][MAZE_MAX_SIZE],
                 display(table, 20, *sens);
             }
             step_motors_basic_move(70);
-            hal_os_sleep(500);
+            HAL_Delay(500);
             step_motors_basic_move(-(168 / 4));
             calibrated++;
             break;
@@ -821,7 +821,7 @@ static int calibrate(int direction, bool setPos, char table[][MAZE_MAX_SIZE],
                 display(table, 20, *sens);
             }
             step_motors_basic_move(70);
-            hal_os_sleep(500);
+            HAL_Delay(500);
             step_motors_basic_move(-(168 / 4));
             calibrated++;
             break;

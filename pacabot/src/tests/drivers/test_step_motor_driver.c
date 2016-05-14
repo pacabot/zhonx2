@@ -33,13 +33,13 @@ int test_step_motor_driver(void)
 
     hal_step_motor_enable();
 
-    hal_os_sleep(500);
+    HAL_Delay(500);
 
     step_motors_move(1500, 0, 0);
     step_motors_rotate_in_place(180);
     step_motors_move(1500, 0, 0);
 
-    hal_os_sleep(1000);
+    HAL_Delay(1000);
     hal_step_motor_disable();
 
     return 0;

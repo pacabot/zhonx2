@@ -77,7 +77,7 @@ int test_oled1(void)
     ssd1306ClearScreen();
     ssd1306DrawBmp(Pacabot_bmp, 1, 1, 128, 40);
     ssd1306Refresh();
-    hal_os_sleep(3500);
+    HAL_Delay(3500);
     ssd1306ClearScreen();
     ssd1306Refresh();
     // miniature bitmap display
@@ -88,29 +88,29 @@ int test_oled1(void)
     ssd1306FillRect(1, 60, 10, 20);
     ssd1306DrawLine(5, 45, 70, 60);
     ssd1306Refresh();
-    hal_os_sleep(5500);
+    HAL_Delay(5500);
     ssd1306ClearScreen();
 
     for (i = 0; i <= 100; i++)
     {
         ssd1306ProgressBar(10, 20, i);
-        hal_os_sleep(1);
+        HAL_Delay(1);
         ssd1306Refresh();
     }
 
     ssd1306ShiftFrameBuffer(8);
     ssd1306DrawString(13, 1, "Oled 128x64", &Font_8x8); // 3x6 is UPPER CASE only
     ssd1306Refresh();
-    hal_os_sleep(1500);
+    HAL_Delay(1500);
     ssd1306DrawString(1, 25, "Driver for STM32f10x", &Font_5x8); // 3x6 is UPPER CASE only
     ssd1306Refresh();
-    hal_os_sleep(500);
+    HAL_Delay(500);
     ssd1306DrawString(1, 35, "4 Wire SPI mode", &Font_5x8); // 3x6 is UPPER CASE only
     ssd1306Refresh();
-    hal_os_sleep(1500);
+    HAL_Delay(1500);
     ssd1306DrawString(10, 55, "BY PLF ALL RIGHTS RESERVED", &Font_3x6); // 3x6 is UPPER CASE only
     ssd1306Refresh();
-    hal_os_sleep(5000);
+    HAL_Delay(5000);
 
     ssd1306ClearScreen();
     ssd1306Refresh();
@@ -125,7 +125,7 @@ int test_oled2(void)
     ssd1306ClearScreen();
     ssd1306DrawBmp(pic_battery_level, 120, 0, 8, 8);
     ssd1306Refresh();
-    hal_os_sleep(4000);
+    HAL_Delay(4000);
 
     return 0;
 }
@@ -146,7 +146,7 @@ int test_oled3(void)
 //        ssd1306Refresh();
 //    }
 
-    hal_os_sleep(10000);
+    HAL_Delay(10000);
 
     return 0;
 }

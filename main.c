@@ -72,20 +72,23 @@ int app_initialization(void)
 {
     int rv;
 
-    zhonx_settings.initial_speed = INITIAL_SPEED;
-    zhonx_settings.max_speed_distance = MAX_SPEED_DISTANCE;
-    zhonx_settings.default_accel = DEFAULT_ACCEL;
-    zhonx_settings.rotate_accel = ROTATE_ACCEL;
-    zhonx_settings.emergency_decel = EMERGENCY_DECEL;
-    zhonx_settings.correction_p = CORRECTION_P;
-    zhonx_settings.correction_i = CORRECTION_I;
-    zhonx_settings.max_correction = MAX_CORRECTION;
-    zhonx_settings.calibration_enabled = false;
-    zhonx_settings.color_sensor_enabled = false;
-    zhonx_settings.threshold_color = 142003;
-    zhonx_settings.threshold_greater=true;
-    zhonx_settings.x_finish_maze=7;
-    zhonx_settings.y_finish_maze=7;
+    zhonxSettings.initial_speed = INITIAL_SPEED;
+    zhonxSettings.max_speed_distance = MAX_SPEED_DISTANCE;
+    zhonxSettings.default_accel = DEFAULT_ACCEL;
+    zhonxSettings.rotate_accel = ROTATE_ACCEL;
+    zhonxSettings.emergency_decel = EMERGENCY_DECEL;
+    zhonxSettings.correction_p = CORRECTION_P;
+    zhonxSettings.correction_i = CORRECTION_I;
+    zhonxSettings.max_correction = MAX_CORRECTION;
+    zhonxSettings.calibration_enabled = false;
+    zhonxSettings.color_sensor_enabled = false;
+    zhonxSettings.threshold_color = 142003;
+    zhonxSettings.threshold_greater=true;
+    zhonxSettings.x_finish_maze=7;
+    zhonxSettings.y_finish_maze=7;
+    zhonxSettings.wall_know_cost=1;
+    zhonxSettings.cell_cost=5;
+    zhonxSettings.start_orientation = 0;
     rv = hal_os_init();
     if (rv != HAL_OS_SUCCESS)
     {

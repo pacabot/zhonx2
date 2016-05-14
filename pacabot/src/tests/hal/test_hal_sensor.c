@@ -43,7 +43,7 @@ int test_hal_sensor(void)
         sprintf(str, "10cm left:  %i\n", ((val & SENSOR_L10_POS) == 0 ? 1 : 0));
         hal_ui_display_txt(app_context.ui, 10, 46, str);
         hal_ui_refresh(app_context.ui);
-        hal_os_sleep(50);
+        HAL_Delay(50);
 
 		if (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_8) != Bit_SET)
 		{

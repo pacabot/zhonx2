@@ -8,6 +8,8 @@
 #ifndef RESOLUTION_MAZE_H_
 #define RESOLUTION_MAZE_H_
 
+#define MAIN_AREA
+
 #define NAND(a,b) (!a && !b)
 
 /* Error codes */
@@ -19,7 +21,7 @@
 #define MAZE_SIZE 17
 
 //definition for numerotation function
-#define CANT_GO 1023
+#define CANT_GO 2147483647
 
 //orientation define
 #define NORTH 0
@@ -36,15 +38,19 @@
 #define WALL_PRESENCE 1
 #define NO_WALL 2
 
+#define NO_END				0
+#define END_FIND			1
+#define POSSIBLE_END_FIND	2
+
 #define MAX_SPEED_ROTATION		(300)
-#define MAX_SPEED_TRANSLATION   (400)
-#define END_SPEED_TRANSLATION	(400)
+#define MAX_SPEED_TRANSLATION   (300)
+#define END_SPEED_TRANSLATION	(300)
 
 #define DEBUG 3
 
 #ifdef DEBUG
-#undef END_SPEED_TRANSLATION
-#define END_SPEED_TRANSLATION 0
+//#undef END_SPEED_TRANSLATION
+//#define END_SPEED_TRANSLATION 10
 #endif
 #define END_OF_LIST 255
 #include <stdlib.h>
@@ -78,7 +84,7 @@ typedef struct coordinate
 }coordinate;
 typedef struct
 {
-    coordinate cordinate;
+    coordinate coordinate_robot;
     char orientation;
     char midOfCell;
 } positionRobot;
@@ -86,14 +92,15 @@ typedef struct
 
 // fonctions
 extern int maze(void);
-void exploration(labyrinthe *maze, positionRobot* positionZhonx,  coordinate *end_coordinate);
+int exploration(labyrinthe *maze, positionRobot* positionZhonx,const positionRobot *start_coordinates,
+        coordinate *end_coordinate);
 int goToPosition(labyrinthe *maze, positionRobot* positionZhonx,  coordinate end_coordinate);
 int moveVirtualZhonx(labyrinthe maze, positionRobot positionZhonxVirtuel,
 		coordinate way[], coordinate end_coordinate);
-void poids(labyrinthe *maze, coordinate end_coordinate, char wallNoKnow);
+void poids(labyrinthe *maze, coordinate end_coordinate, char wallNoKnow, char contournKnownCell);
 void mazeInit (labyrinthe *maze);
 void* calloc_s (size_t nombre, size_t taille);
-void printMaze(const labyrinthe maze, coordinate robot_coordinate);
+void printMaze(labyrinthe maze, coordinate robot_coordinate);
 void printLength(const labyrinthe maze,const int x_robot, const int y_robot);
 void clearMazelength(labyrinthe* maze);
 char miniwayFind(labyrinthe *maze, coordinate start_coordinate, coordinate end_coordinate);
@@ -102,4 +109,7 @@ void waitStart(void);
 char diffway(coordinate way1[], coordinate way2[]);
 coordinate findEndCoordinate (coordinate coordinate_tab[]);
 int findArrival (labyrinthe maze, coordinate *end_coordinate);
+walls ask_cell_state ();
+void print_cell_state (walls cell_state);
+walls ask_cell_state();
 #endif /* RESOLUTION_MAZE_H_ */

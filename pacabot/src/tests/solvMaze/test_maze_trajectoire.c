@@ -1,4 +1,4 @@
-// Programme de test permettant de simuler une trajectoire à partir d'une
+// Programme de test permettant de simuler une trajectoire ï¿½ partir d'une
 // chaine de commande
 /*
  * En attente des capteurs droit et gauche pour le recallage en ligne droite
@@ -33,10 +33,10 @@ extern void trajectoire2(char * Tab, int taille);
 int test_maze_trajectoire(void)
 {
     unsigned char   port = 0;
-    char chemin[]="0012323021010322";  // le premier 0 correspond à la position de depart
+    char chemin[]="0012323021010322";  // le premier 0 correspond ï¿½ la position de depart
     hal_serial_open(&serial, &port, 115200);
     step_motors_init();
-    hal_os_sleep(2000);
+    HAL_Delay(2000);
 
 	//ChaineParcours(chemin,strlen(chemin));
     trajectoire1(chemin, strlen(chemin));

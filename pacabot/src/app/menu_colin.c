@@ -33,7 +33,6 @@
 #include "oled/arrows_bmp.h"
 #include "oled/ssd1306.h"
 #include "oled/smallfonts.h"
-//#include "app/solver_maze.h"
 
 #define JOYSTICK_LEFT       GPIOC, GPIO_Pin_8
 #define JOYSTICK_UP         GPIOC, GPIO_Pin_9
@@ -41,6 +40,8 @@
 #define JOYSTICK_RIGHT      GPIOC, GPIO_Pin_11
 #define JOYSTICK_PUSH       GPIOC, GPIO_Pin_12
 #define RETURN_BUTTON       GPIOC, GPIO_Pin_13
+
+
 /* Extern functions */
 extern void hal_ui_anti_rebonds (GPIO_TypeDef* gpio, uint16_t gpio_pin);
 extern int test_hal_adc(void);
@@ -71,13 +72,14 @@ menuItem maze_menu =
 		"maze menu",
 		{
 				{"New maze",'f',			(void*)&maze},
-				{"x finish",'i',			(void*)&zhonx_settings.x_finish_maze},
-				{"y finish",'i',			(void*)&zhonx_settings.y_finish_maze},
-				{"color finish",'b',		(void*)&zhonx_settings.color_sensor_enabled},
-				{"calib. enabled",'b',		(void*)&zhonx_settings.calibration_enabled},
+                {"wall know cost",'i',      (void*)&zhonxSettings.wall_know_cost},
+                {"move cost",'i',           (void*)&zhonxSettings.cell_cost},
+                {"direction",'i',           (void*)&zhonxSettings.start_orientation},
+				{"x finish",'i',			(void*)&zhonxSettings.x_finish_maze},
+				{"y finish",'i',			(void*)&zhonxSettings.y_finish_maze},
+				{"color finish",'b',		(void*)&zhonxSettings.color_sensor_enabled},
+				{"calib. enabled",'b',		(void*)&zhonxSettings.calibration_enabled},
 				{"calibration",'f',			(void*)calibrateSimple},
-//				{"Trajectory...",'f',		&trajectory_menu},
-//				{"Restore maze",            &restore_maze_menu}
 				{(char*)NULL,	0,				NULL}
 		}
 };
@@ -111,11 +113,11 @@ menuItem motion_settings =
 {
     "MOTION SETTINGS",
     {
-		{"Initial speed :",'l',			(void*)&zhonx_settings.initial_speed},
-		{"Max speed dist:",'l',			(void*)&zhonx_settings.max_speed_distance},
-		{"Default accel :",'l',			(void*)&zhonx_settings.default_accel},
-		{"Rotate accel  :",'l',			(void*)&zhonx_settings.rotate_accel},
-		{"Emerg decel   :",'l',			(void*)&zhonx_settings.emergency_decel},
+		{"Initial speed :",'l',			(void*)&zhonxSettings.initial_speed},
+		{"Max speed dist:",'l',			(void*)&zhonxSettings.max_speed_distance},
+		{"Default accel :",'l',			(void*)&zhonxSettings.default_accel},
+		{"Rotate accel  :",'l',			(void*)&zhonxSettings.rotate_accel},
+		{"Emerg decel   :",'l',			(void*)&zhonxSettings.emergency_decel},
 		{(char*)NULL,	0,				NULL}
     }
 };
@@ -123,9 +125,9 @@ menuItem PID_settings =
 {
     "PID SETTINGS",
     {
-		{"Proportional  :",'l',			(void*)&zhonx_settings.correction_p},
-		{"Integral      :",'l',			(void*)&zhonx_settings.correction_i},
-		{"Max correction:",'l',			(void*)&zhonx_settings.max_correction},
+		{"Proportional  :",'l',			(void*)&zhonxSettings.correction_p},
+		{"Integral      :",'l',			(void*)&zhonxSettings.correction_i},
+		{"Max correction:",'l',			(void*)&zhonxSettings.max_correction},
 		{(char*)NULL,	0,				NULL}
     }
 };
@@ -133,10 +135,10 @@ menuItem sensor_settings =
 {
     "COLOR SENSOR SETTINGS",
     {
-		{"Enabled?      :",'b',			(void*)&zhonx_settings.color_sensor_enabled},
+		{"Enabled?      :",'b',			(void*)&zhonxSettings.color_sensor_enabled},
 		{"Calibrate color",'f',			sensor_calibrate},
-		{"Threshold val :",'l',			(void*)&zhonx_settings.threshold_color},
-		{"End Greater?  :",'b',			(void*)&zhonx_settings.threshold_greater},
+		{"Threshold val :",'l',			(void*)&zhonxSettings.threshold_color},
+		{"End Greater?  :",'b',			(void*)&zhonxSettings.threshold_greater},
 		{(char*)NULL,	0,				NULL}
     }
 };
@@ -185,7 +187,7 @@ menuItem menu_c =
 			{"Maze menu",'m',			(void*)&maze_menu },
 			{"prameters",'m',			(void*)&paramters_menu},
 			{"test menu",'m',			(void*)&tests_menu},
-			{"beeper enabled?",'b',		(void*)&zhonx_settings.beeper_enabled},
+			{"beeper enabled?",'b',		(void*)&zhonxSettings.beeper_enabled},
 			{"test graph",'m',			(void*)&testGraphicMenu},
 			{(char*)NULL,	0,				NULL}
 		}
@@ -299,7 +301,7 @@ void menu_animate(unsigned char y, unsigned char max_y)
             ssd1306InvertArea(0, y - 1, 120, 10);
             ssd1306InvertArea(0, y, 120, 10);
             ssd1306Refresh();
-            hal_os_sleep(10);
+            HAL_Delay(10);
         }
     }
     else
@@ -309,7 +311,7 @@ void menu_animate(unsigned char y, unsigned char max_y)
             ssd1306InvertArea(0, y + 1, 120, 10);
             ssd1306InvertArea(0, y, 120, 10);
             ssd1306Refresh();
-            hal_os_sleep(10);
+            HAL_Delay(10);
         }
     }
 }

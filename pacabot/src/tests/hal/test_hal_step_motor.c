@@ -20,7 +20,7 @@ extern void step_motors_decelerate(long distance, bool correction);
 int test_motor_rotate(void)
 {
     hal_step_motor_enable();
-    hal_os_sleep(2000);
+    HAL_Delay(2000);
 
 //    step_motors_move(450, 0, 0);
 //    step_motors_rotate_in_place(180);
@@ -60,7 +60,7 @@ int test_hal_step_motor(void)
     int ii;
 
     hal_step_motor_enable();
-    hal_os_sleep(1000);
+    HAL_Delay(1000);
 
     step_motors_move(450, 0, 0);
     //hal_os_sleep(10000);
@@ -70,20 +70,20 @@ int test_hal_step_motor(void)
     for (ii = 0; ii < 10; ii++)
     {
         step_motors_rotate_in_place(180);
-        hal_os_sleep(1000);
+        HAL_Delay(1000);
         step_motors_move(700, 0, 0);
     }
 
-    hal_os_sleep(3000);
+    HAL_Delay(3000);
 
     for (ii = 0; ii < 10; ii++)
     {
         step_motors_rotate_in_place(-180);
-        hal_os_sleep(1000);
+        HAL_Delay(1000);
         step_motors_move(700, 0, 0);
     }
 
-    hal_os_sleep(3000);
+    HAL_Delay(3000);
 
     hal_step_motor_disable();
 

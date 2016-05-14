@@ -18,14 +18,14 @@ int distance_cal(void)
 {
     int ii;
     hal_step_motor_enable();
-    hal_os_sleep(2000);
+    HAL_Delay(2000);
 
     for (ii = 0; ii < 4; ii++)
     {
         step_motors_move(540, SENSOR_L10_POS | SENSOR_R10_POS, 0);
-        hal_os_sleep(2000);
+        HAL_Delay(2000);
         step_motors_rotate_in_place(180);
-        hal_os_sleep(2000);
+        HAL_Delay(2000);
     }
 
 //    for (ii = 0; ii < 4; ii++)
@@ -46,7 +46,7 @@ int distance_cal(void)
 //        step_motors_rotate_in_place(180);
 //    }
 
-    hal_os_sleep(1000);
+    HAL_Delay(1000);
 
     hal_step_motor_disable();
 

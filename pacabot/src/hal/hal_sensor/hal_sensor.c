@@ -183,7 +183,7 @@ int hal_sensor_get_color(HAL_SENSOR_HANDLE handle)
     //GPIO_SetBits(SENSOR_CR);
 
     /* Wait for the capacitors to charge */
-    hal_os_sleep(2);
+    HAL_Delay(2);
 
     GPIO_InitStructure.GPIO_Pin = SENSOR_CL_PIN;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;

@@ -112,7 +112,7 @@ int hal_beeper_open(HAL_BEEPER_HANDLE *handle, void *params)
         TIM_ARRPreloadConfig(BEEPER_TIMER, ENABLE);
         beeper.isInitialized = true;
         BEEPER_TIMER->CCER &= ~TIM_CCER_CC3E;
-        zhonx_settings.beeper_enabled = true;
+        zhonxSettings.beeper_enabled = true;
     }
     *handle = (HAL_BEEPER_HANDLE)&beeper;
 #endif
@@ -130,7 +130,7 @@ int hal_beeper_get_state(HAL_BEEPER_HANDLE handle, int *state)
 {
     UNUSED(handle);
 
-    if (zhonx_settings.beeper_enabled == true)
+    if (zhonxSettings.beeper_enabled == true)
     {
         *state = HAL_BEEPER_STATE_ON;
     }
@@ -151,10 +151,10 @@ int hal_beeper_set_state(HAL_BEEPER_HANDLE handle, int state)
     switch (state)
     {
         case HAL_BEEPER_STATE_OFF:
-            zhonx_settings.beeper_enabled = false;
+            zhonxSettings.beeper_enabled = false;
             break;
         case HAL_BEEPER_STATE_ON:
-            zhonx_settings.beeper_enabled = true;
+            zhonxSettings.beeper_enabled = true;
             break;
     }
     return HAL_BEEPER_E_SUCCESS;
@@ -167,7 +167,7 @@ int hal_beeper_beep(HAL_BEEPER_HANDLE handle, long freq, long duration)
     beeper_handle *h;
     unsigned short timer_period = 0;
 
-    if (zhonx_settings.beeper_enabled == false)
+    if (zhonxSettings.beeper_enabled == false)
     {
         return HAL_BEEPER_E_SUCCESS;
     }
@@ -210,7 +210,7 @@ int hal_beeper_beep(HAL_BEEPER_HANDLE handle, long freq, long duration)
 
     /* Enable timer counter */
     TIM_Cmd(BEEPER_TIMER, ENABLE);
-    hal_os_sleep(duration);
+    HAL_Delay(duration);
     TIM_Cmd(BEEPER_TIMER, DISABLE);
     BEEPER_TIMER->CCER &= ~TIM_CCER_CC3E;
 #endif

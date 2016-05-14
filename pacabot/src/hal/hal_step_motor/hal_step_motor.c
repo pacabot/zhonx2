@@ -22,7 +22,7 @@
 /* APB1 bus frequency (in Hz) */
 # define APB1_FREQ 42000000
 /* Timer base frequency (in Hz) */
-// TODO: Analyser pourquoi une fréquence de 64000 ne fonctionne pas correctement
+// TODO: Analyser pourquoi une frï¿½quence de 64000 ne fonctionne pas correctement
 # define TIMER_FREQ 350000
 
 /* Toggle frequency (in Hz) */
@@ -170,7 +170,7 @@ int hal_step_motor_open(HAL_STEP_MOTOR_HANDLE *handle, void *params)
     TIM_ARRPreloadConfig(step_motor[step_motor_position].timer, ENABLE);
 
     /* Set default acceleration */
-    step_motor[step_motor_position].acceleration = zhonx_settings.default_accel;
+    step_motor[step_motor_position].acceleration = zhonxSettings.default_accel;
 
     /* Enable timer counter */
     TIM_Cmd(step_motor[step_motor_position].timer, ENABLE);
@@ -629,7 +629,7 @@ void TIM2_IRQHandler(void)
 
         case STATE_DECEL:
             // Avoid setting the frequency under a minimum value
-            if (step_motor[0].freq > zhonx_settings.initial_speed)
+            if (step_motor[0].freq > zhonxSettings.initial_speed)
             {
                 step_motor[0].freq -= step_motor[0].acceleration;
             }
@@ -670,7 +670,7 @@ void TIM3_IRQHandler(void)
 
         case STATE_DECEL:
             // Avoid setting the frequency under a minimum value
-            if (step_motor[1].freq > zhonx_settings.initial_speed)
+            if (step_motor[1].freq > zhonxSettings.initial_speed)
             {
                 step_motor[1].freq -= step_motor[1].acceleration;
             }

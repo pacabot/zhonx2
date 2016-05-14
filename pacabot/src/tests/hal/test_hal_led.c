@@ -31,7 +31,7 @@ int test_hal_led(void)
         hal_led_set_state(leds, HAL_LED_COLOR_ORANGE, ENABLE);
         hal_led_set_state(leds, HAL_LED_COLOR_RED, ENABLE);
 
-        hal_os_sleep(500);
+        HAL_Delay(500);
 
         hal_led_set_state(leds, HAL_LED_COLOR_ORANGE, DISABLE);
         hal_led_set_state(leds, HAL_LED_COLOR_RED, DISABLE);

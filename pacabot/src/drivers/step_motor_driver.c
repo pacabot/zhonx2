@@ -151,8 +151,8 @@ int step_motors_move(int distance_mm,
         hal_step_motor_set_direction(motors[1].motor, DIRECTION_FWD);
     }
 
-    hal_step_motor_set_acceleration(motors[0].motor, zhonx_settings.default_accel);
-    hal_step_motor_set_acceleration(motors[1].motor, zhonx_settings.default_accel);
+    hal_step_motor_set_acceleration(motors[0].motor, zhonxSettings.default_accel);
+    hal_step_motor_set_acceleration(motors[1].motor, zhonxSettings.default_accel);
 
     /* Compute the total distance in steps */
     distance_steps = lround(distance_mm * STEPS_PER_MM) * 2;
@@ -161,31 +161,31 @@ int step_motors_move(int distance_mm,
     accel = (!check_bit(chain, CHAIN_BEFORE));
     /* Do not decelerate if another command is to be chained to this one */
     decel = (!check_bit(chain, CHAIN_AFTER));
-    maintain = (distance_steps > (zhonx_settings.max_speed_distance * 2)) ? true : false;
+    maintain = (distance_steps > (zhonxSettings.max_speed_distance * 2)) ? true : false;
 
     /* Compute the acceleration distance */
     if (true == maintain)
     {
         if (true == accel)
         {
-            rv = step_motors_accelerate(zhonx_settings.max_speed_distance,
+            rv = step_motors_accelerate(zhonxSettings.max_speed_distance,
                                         sensor_condition, correction, 1);
             if ((rv == DOOR_DETECTED) || (rv == EMERGENCY_STOP))
             {
                 goto out;
             }
-            distance_steps -= zhonx_settings.max_speed_distance;
+            distance_steps -= zhonxSettings.max_speed_distance;
         }
 
         if (true == decel)
         {
-            distance_steps -= zhonx_settings.max_speed_distance;
+            distance_steps -= zhonxSettings.max_speed_distance;
             rv = step_motors_maintain(distance_steps, sensor_condition, correction, 1);
             if ((rv == DOOR_DETECTED) || (rv == EMERGENCY_STOP))
             {
                 goto out;
             }
-            rv = step_motors_decelerate(zhonx_settings.max_speed_distance,
+            rv = step_motors_decelerate(zhonxSettings.max_speed_distance,
                                         sensor_condition, correction, 1);
             if ((rv == DOOR_DETECTED) || (rv == EMERGENCY_STOP))
             {
@@ -271,15 +271,15 @@ int step_motors_basic_move(int distance_mm)
         hal_step_motor_set_direction(motors[1].motor, DIRECTION_FWD);
     }
 
-    hal_step_motor_set_acceleration(motors[0].motor, zhonx_settings.default_accel);
-    hal_step_motor_set_acceleration(motors[1].motor, zhonx_settings.default_accel);
+    hal_step_motor_set_acceleration(motors[0].motor, zhonxSettings.default_accel);
+    hal_step_motor_set_acceleration(motors[1].motor, zhonxSettings.default_accel);
 
     /* Compute the total distance in steps */
     distance_steps = lround(distance_mm * STEPS_PER_MM) * 2;
 
     /* Set the initial speed */
-    hal_step_motor_set_freq(motors[0].motor, zhonx_settings.initial_speed);
-    hal_step_motor_set_freq(motors[1].motor, zhonx_settings.initial_speed);
+    hal_step_motor_set_freq(motors[0].motor, zhonxSettings.initial_speed);
+    hal_step_motor_set_freq(motors[1].motor, zhonxSettings.initial_speed);
 
     cnt_end1 = hal_step_motor_get_counter(motors[0].motor) + distance_steps;
     cnt_end2 = hal_step_motor_get_counter(motors[1].motor) + distance_steps;
@@ -371,8 +371,8 @@ int step_motors_curve_rotate(double angle, double radius, unsigned char chain)
     bool   		 			maintain = false;
 
     /* Set new acceleration values for the current movement */
-    hal_step_motor_set_acceleration(motors[0].motor, zhonx_settings.rotate_accel);
-    hal_step_motor_set_acceleration(motors[1].motor, zhonx_settings.rotate_accel);
+    hal_step_motor_set_acceleration(motors[0].motor, zhonxSettings.rotate_accel);
+    hal_step_motor_set_acceleration(motors[1].motor, zhonxSettings.rotate_accel);
 
     /* Process the direction */
     if (angle == 0)
@@ -407,20 +407,20 @@ int step_motors_curve_rotate(double angle, double radius, unsigned char chain)
 
     coeff_steps_in *= rotate_dir;
 
-    maintain = (distance_steps_out > (zhonx_settings.max_speed_distance * 2)) ? true : false;
+    maintain = (distance_steps_out > (zhonxSettings.max_speed_distance * 2)) ? true : false;
 
     if (true == maintain)
     {
         // Accelerate
-        step_motors_accelerate(zhonx_settings.max_speed_distance, 0, false, coeff_steps_in);
-        distance_steps_out -= zhonx_settings.max_speed_distance;
+        step_motors_accelerate(zhonxSettings.max_speed_distance, 0, false, coeff_steps_in);
+        distance_steps_out -= zhonxSettings.max_speed_distance;
 
         // Maintain speed
-        distance_steps_out -= zhonx_settings.max_speed_distance;
+        distance_steps_out -= zhonxSettings.max_speed_distance;
         step_motors_maintain(distance_steps_out, 0, false, coeff_steps_in);
 
         // Decelerate
-        step_motors_decelerate(zhonx_settings.max_speed_distance, 0, false, coeff_steps_in);
+        step_motors_decelerate(zhonxSettings.max_speed_distance, 0, false, coeff_steps_in);
     }
     else
     {
@@ -445,8 +445,8 @@ int step_motors_rotate_in_place(double angle)
     bool    maintain = false;
 
     /* Set new acceleration values for the current movement */
-    hal_step_motor_set_acceleration(motors[0].motor, zhonx_settings.rotate_accel);
-    hal_step_motor_set_acceleration(motors[1].motor, zhonx_settings.rotate_accel);
+    hal_step_motor_set_acceleration(motors[0].motor, zhonxSettings.rotate_accel);
+    hal_step_motor_set_acceleration(motors[1].motor, zhonxSettings.rotate_accel);
 
     /* Process the direction */
     if (angle == 0)
@@ -474,20 +474,20 @@ int step_motors_rotate_in_place(double angle)
                             (angle / 360.0) *
                             (WHEELS_DISTANCE / WHEEL_DIAMETER));
 
-    maintain = (distance_steps > (zhonx_settings.max_speed_distance * 2)) ? true : false;
+    maintain = (distance_steps > (zhonxSettings.max_speed_distance * 2)) ? true : false;
 
     if (true == maintain)
     {
         // Accelerate
-        step_motors_accelerate(zhonx_settings.max_speed_distance, 0, false, 1);
-        distance_steps -= zhonx_settings.max_speed_distance;
+        step_motors_accelerate(zhonxSettings.max_speed_distance, 0, false, 1);
+        distance_steps -= zhonxSettings.max_speed_distance;
 
         // Maintain speed
-        distance_steps -= zhonx_settings.max_speed_distance;
+        distance_steps -= zhonxSettings.max_speed_distance;
         step_motors_maintain(distance_steps, 0, false, 1);
 
         // Decelerate
-        step_motors_decelerate(zhonx_settings.max_speed_distance, 0, false, 1);
+        step_motors_decelerate(zhonxSettings.max_speed_distance, 0, false, 1);
     }
     else
     {
@@ -514,8 +514,8 @@ void step_motors_stop(void)
     long freq_left;
 
     /* Set the deceleration value to emergency deceleration */
-    hal_step_motor_set_acceleration(motors[0].motor, zhonx_settings.emergency_decel);
-    hal_step_motor_set_acceleration(motors[1].motor, zhonx_settings.emergency_decel);
+    hal_step_motor_set_acceleration(motors[0].motor, zhonxSettings.emergency_decel);
+    hal_step_motor_set_acceleration(motors[1].motor, zhonxSettings.emergency_decel);
 
     /* Give the motors the order to decelerate */
     hal_step_motor_decelerate(motors[0].motor);
@@ -528,7 +528,7 @@ void step_motors_stop(void)
         freq_right = hal_step_motor_get_freq(motors[0].motor);
         freq_left  = hal_step_motor_get_freq(motors[1].motor);
     }
-    while ((freq_right > zhonx_settings.initial_speed) || (freq_left > zhonx_settings.initial_speed));
+    while ((freq_right > zhonxSettings.initial_speed) || (freq_left > zhonxSettings.initial_speed));
 
     /* Reset the deceleration flag */
     hal_step_motor_maintain(motors[0].motor);
@@ -554,8 +554,8 @@ int step_motors_accelerate(long distance,
     int rv = STEP_MOTOR_DRIVER_E_SUCCESS;
 
     /* Set the initial speed */
-    hal_step_motor_set_freq(motors[0].motor, zhonx_settings.initial_speed);
-    hal_step_motor_set_freq(motors[1].motor, zhonx_settings.initial_speed);
+    hal_step_motor_set_freq(motors[0].motor, zhonxSettings.initial_speed);
+    hal_step_motor_set_freq(motors[1].motor, zhonxSettings.initial_speed);
 
     if (curve_coeff < 1)
     {
@@ -786,8 +786,8 @@ int step_motors_maintain(long distance,
             if (((DETECT_LEFT_DOOR == true) && (LEFT_WALL_HERE == false)) ||
                 ((DETECT_RIGHT_DOOR == true) && (RIGHT_WALL_HERE == false)))
             {
-                hal_step_motor_set_acceleration(motors[0].motor, zhonx_settings.emergency_decel);
-                hal_step_motor_set_acceleration(motors[1].motor, zhonx_settings.emergency_decel);
+                hal_step_motor_set_acceleration(motors[0].motor, zhonxSettings.emergency_decel);
+                hal_step_motor_set_acceleration(motors[1].motor, zhonxSettings.emergency_decel);
                 rv = DOOR_DETECTED;
                 break;
             }
@@ -825,8 +825,8 @@ int step_motors_correction(void)
         {
             j = 0;
             i++;
-            hal_pid_left_set_count(zhonx_settings.max_correction / i);
-            hal_pid_right_set_count(zhonx_settings.max_correction / i);
+            hal_pid_left_set_count(zhonxSettings.max_correction / i);
+            hal_pid_right_set_count(zhonxSettings.max_correction / i);
             hal_pid_set_type_correction(NO_CORRECTION);
             hal_pid_set_wall_correction(L_WALL_CORRECTION);
         }
@@ -848,7 +848,7 @@ int step_motors_correction(void)
             freq_right = hal_step_motor_get_freq(motors[0].motor);
             freq_left  = hal_step_motor_get_freq(motors[1].motor);
 
-            freq_correction = zhonx_settings.correction_p + hal_pid_left_get_old_count();
+            freq_correction = zhonxSettings.correction_p + hal_pid_left_get_old_count();
 
             hal_step_motor_set_freq(motors[0].motor,
                                     lround((freq_right + freq_left) / 2) - freq_correction);
@@ -872,7 +872,7 @@ int step_motors_correction(void)
             freq_left  = hal_step_motor_get_freq(motors[1].motor);
 
             //freq_correction = lround(((freq_right + freq_left) / 2) / lround((zhonx_settings.correction_p - hal_pid_right_get_old_count())/10));
-            freq_correction = zhonx_settings.correction_p + hal_pid_right_get_old_count();
+            freq_correction = zhonxSettings.correction_p + hal_pid_right_get_old_count();
 
             hal_step_motor_set_freq(motors[0].motor,
                                     lround((freq_right + freq_left) / 2) + freq_correction);
@@ -887,8 +887,8 @@ int step_motors_correction(void)
         {
             i = 0;
             j++;
-            hal_pid_left_set_count(zhonx_settings.max_correction / j);
-            hal_pid_right_set_count(zhonx_settings.max_correction / j);
+            hal_pid_left_set_count(zhonxSettings.max_correction / j);
+            hal_pid_right_set_count(zhonxSettings.max_correction / j);
             hal_pid_set_type_correction(NO_CORRECTION);
             hal_pid_set_wall_correction(R_WALL_CORRECTION);
         }
@@ -910,7 +910,7 @@ int step_motors_correction(void)
             freq_right = hal_step_motor_get_freq(motors[0].motor);
             freq_left  = hal_step_motor_get_freq(motors[1].motor);
 
-            freq_correction = zhonx_settings.correction_p + hal_pid_right_get_old_count();
+            freq_correction = zhonxSettings.correction_p + hal_pid_right_get_old_count();
 
             hal_step_motor_set_freq(motors[0].motor,
                                     lround((freq_right + freq_left) / 2) + freq_correction);
@@ -934,7 +934,7 @@ int step_motors_correction(void)
             freq_left  = hal_step_motor_get_freq(motors[1].motor);
 
             //freq_correction = lround(((freq_right + freq_left) / 2) /
-            freq_correction = zhonx_settings.correction_p + hal_pid_left_get_old_count();
+            freq_correction = zhonxSettings.correction_p + hal_pid_left_get_old_count();
 
             hal_step_motor_set_freq(motors[0].motor,
                                     lround((freq_right + freq_left) / 2) - freq_correction);
@@ -951,7 +951,7 @@ int step_motors_correction(void)
         freq_right = hal_step_motor_get_freq(motors[0].motor);
         freq_left  = hal_step_motor_get_freq(motors[1].motor);
 
-        freq_correction = ((freq_right + freq_left) / 2) / zhonx_settings.correction_p;
+        freq_correction = ((freq_right + freq_left) / 2) / zhonxSettings.correction_p;
 
         hal_step_motor_set_freq(motors[0].motor, (freq_right + freq_left)/2);
         hal_step_motor_set_freq(motors[1].motor, (freq_right + freq_left)/2);

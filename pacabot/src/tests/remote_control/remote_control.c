@@ -40,7 +40,7 @@ int test_remote_control(void)
 
     step_motors_init();
 
-    hal_os_sleep(500);
+    HAL_Delay(500);
 
     do
     {

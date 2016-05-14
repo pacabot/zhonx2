@@ -23,7 +23,6 @@
 #define MENU_DIRECTION_DOWN      3
 #define MENU_DIRECTION_LEFT      4
 
-
 /* HAL UI handle */
 typedef void *HAL_UI_HANDLE;
 

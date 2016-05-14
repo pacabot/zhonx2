@@ -116,7 +116,7 @@ unsigned long hal_os_get_systicks(void)
  * @return #HAL_OS_SUCCESS if the operation is successful
  *
  */
-int hal_os_sleep(unsigned long delay_ms)
+int HAL_Delay(unsigned long delay_ms)
 {
     unsigned long start = os_context.system_ticks;
     unsigned long end = start + delay_ms;

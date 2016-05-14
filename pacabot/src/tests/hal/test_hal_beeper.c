@@ -35,18 +35,18 @@ int test_hal_beeper(void)
         while (freq < 1800)
         {
             hal_beeper_beep(beeper, freq, 25);
-            hal_os_sleep(15);
+            HAL_Delay(15);
             freq += 100;
         }
         while (freq > 800)
         {
             hal_beeper_beep(beeper, freq, 25);
-            hal_os_sleep(15);
+            HAL_Delay(15);
             freq -= 100;
         }
     }
 
-    hal_os_sleep(500);
+    HAL_Delay(500);
 
     i = 0;
     freq = 660;
@@ -60,10 +60,10 @@ int test_hal_beeper(void)
             duration = 500;
         }
         hal_beeper_beep(beeper, freq, duration);
-        hal_os_sleep(1000 - duration);
+        HAL_Delay(1000 - duration);
         i++;
     }
-	hal_os_sleep(1000);
+	HAL_Delay(1000);
 	hal_beeper_beep(beeper, 1046, 400);
 	hal_beeper_beep(beeper, 1320, 320);
 	hal_beeper_beep(beeper, 1568, 240);

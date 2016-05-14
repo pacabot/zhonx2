@@ -27,7 +27,7 @@ void run1(labyrinthe *maze, positionRobot *positionZhonx, coordinate start_oordi
 	{
 		choice = -1;
 		clearMazelength(maze);
-		poids(maze, end_coordinate, false);
+		poids(maze, end_coordinate, false, false);
 		hal_step_motor_enable();
 		moveVirtualZhonx(*maze, *positionZhonx, way, end_coordinate);
 		waitStart ();
@@ -62,16 +62,16 @@ void run2(labyrinthe *maze, positionRobot *positionZhonx, coordinate start_oordi
 	{
 		choice = -1;
 		clearMazelength(maze);
-		poids(maze, end_coordinate, true);
-		printMaze(*maze,positionZhonx->cordinate);
+		poids(maze, end_coordinate, false, false);
+		printMaze(*maze,positionZhonx->coordinate_robot);
 		waitStart ();
 		moveVirtualZhonx (*maze, *positionZhonx, way, end_coordinate);
 		moveRealZhonxArc (maze, positionZhonx, way);
-		if (zhonx_settings.calibration_enabled == true)
+		if (zhonxSettings.calibration_enabled == true)
 			calibrateSimple ();
-		hal_os_sleep(2000);
+		HAL_Delay(2000);
 		goToPosition(maze,positionZhonx,start_oordinate);
-		if (zhonx_settings.calibration_enabled == true)
+		if (zhonxSettings.calibration_enabled == true)
 			calibrateSimple ();
 		doUTurn (positionZhonx);
 		ssd1306ClearScreen ();

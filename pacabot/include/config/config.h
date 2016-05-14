@@ -113,6 +113,9 @@ typedef struct
     unsigned char   threshold_greater;
     unsigned int	x_finish_maze;
     unsigned int	y_finish_maze;
+    int wall_know_cost;
+    int cell_cost;
+    int start_orientation;
 }
 robot_settings;
 
@@ -124,7 +127,7 @@ typedef struct
     short   magic_word;
 } maze_object;
 
-robot_settings zhonx_settings;
+robot_settings zhonxSettings;
 
 #endif // __CONFIG_H__
 

@@ -49,7 +49,7 @@ int test_hal_adc(void)
             {
                 // Wait until button is released
                 while (GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_8) != Bit_SET);
-                hal_os_sleep(200);
+                HAL_Delay(200);
                 return 0;
             }
         }

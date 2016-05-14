@@ -73,7 +73,7 @@ unsigned long hal_os_get_systicks(void);
  * @return #HAL_OS_SUCCESS if the operation is successful
  *
  */
-int hal_os_sleep(unsigned long ms);
+int HAL_Delay(unsigned long ms);
 
 /**
  * @brief Prints a string on the trace output.

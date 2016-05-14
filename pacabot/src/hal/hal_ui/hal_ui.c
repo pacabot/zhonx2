@@ -100,7 +100,7 @@ int hal_ui_init(void)
     {
         ssd1306ProgressBar(10, 55, i);
         ssd1306Refresh();
-        hal_os_sleep(10);
+        HAL_Delay(10);
     }
 
     return HAL_UI_E_SUCCESS;
@@ -224,7 +224,7 @@ int hal_ui_display_prompt(HAL_UI_HANDLE handle,
     while(GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_SET);
     // Wait until 'Return' Button is released
     while(GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET);
-    hal_os_sleep(VALIDATE_WAIT_TIME);
+    HAL_Delay(VALIDATE_WAIT_TIME);
 
     return 0;
 }
@@ -239,7 +239,7 @@ static void menu_animate(unsigned char y, unsigned char max_y)
             ssd1306InvertArea(0, y - 1, 128, 10);
             ssd1306InvertArea(0, y, 128, 10);
             ssd1306Refresh();
-            hal_os_sleep(2);
+            HAL_Delay(2);
         }
     }
     else
@@ -249,7 +249,7 @@ static void menu_animate(unsigned char y, unsigned char max_y)
             ssd1306InvertArea(0, y + 1, 128, 10);
             ssd1306InvertArea(0, y, 128, 10);
             ssd1306Refresh();
-            hal_os_sleep(2);
+            HAL_Delay(2);
         }
     }
 }
@@ -378,7 +378,7 @@ int hal_ui_display_menu(HAL_UI_HANDLE handle, void *menu,
             {
                 // Wait until button is released
                 hal_ui_anti_rebonds(JOYSTICK_RIGHT);
-                hal_os_sleep(VALIDATE_WAIT_TIME);
+                HAL_Delay(VALIDATE_WAIT_TIME);
 
                 if (item[(*selected_index) - 1].handler != null)
                 {
@@ -459,7 +459,7 @@ int hal_ui_display_bmp_menu(HAL_UI_HANDLE handle, void *menu, void *param)
         {
             // Wait until button is released
             while (GPIO_ReadInputDataBit(JOYSTICK_LEFT) == Bit_RESET);
-            hal_os_sleep(VALIDATE_WAIT_TIME);
+            HAL_Delay(VALIDATE_WAIT_TIME);
             return HAL_UI_E_SUCCESS;
         }
 
@@ -481,7 +481,7 @@ int hal_ui_display_bmp_menu(HAL_UI_HANDLE handle, void *menu, void *param)
                     ITEM_HOVER;
                     selected_item = &item[items_nb];
                     hal_beeper_beep(beeper, 4000, 10);
-                    hal_os_sleep(VALIDATE_WAIT_TIME);
+                    HAL_Delay(VALIDATE_WAIT_TIME);
                 }
             }
         }
@@ -504,7 +504,7 @@ int hal_ui_display_bmp_menu(HAL_UI_HANDLE handle, void *menu, void *param)
                     ITEM_HOVER;
                     selected_item = &item[items_nb];
                     hal_beeper_beep(beeper, 4000, 10);
-                    hal_os_sleep(VALIDATE_WAIT_TIME);
+                    HAL_Delay(VALIDATE_WAIT_TIME);
                 }
             }
         }
@@ -527,7 +527,7 @@ int hal_ui_display_bmp_menu(HAL_UI_HANDLE handle, void *menu, void *param)
                     ITEM_HOVER;
                     selected_item = &item[items_nb];
                     hal_beeper_beep(beeper, 4000, 10);
-                    hal_os_sleep(VALIDATE_WAIT_TIME);
+                    HAL_Delay(VALIDATE_WAIT_TIME);
                 }
             }
         }
@@ -550,7 +550,7 @@ int hal_ui_display_bmp_menu(HAL_UI_HANDLE handle, void *menu, void *param)
                     ITEM_HOVER;
                     selected_item = &item[items_nb];
                     hal_beeper_beep(beeper, 4000, 10);
-                    hal_os_sleep(VALIDATE_WAIT_TIME);
+                    HAL_Delay(VALIDATE_WAIT_TIME);
                 }
             }
         }
@@ -559,7 +559,7 @@ int hal_ui_display_bmp_menu(HAL_UI_HANDLE handle, void *menu, void *param)
         {
             // Wait until button is released
             while (GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET);
-            hal_os_sleep(VALIDATE_WAIT_TIME);
+            HAL_Delay(VALIDATE_WAIT_TIME);
 
             if (selected_item->handler != null)
             {
@@ -627,7 +627,7 @@ int hal_ui_modify_bool_param(HAL_UI_HANDLE handle,
             ssd1306ClearRect(0, 28, 164, 8);
             ssd1306DrawString(0, 28, str, &Font_8x8);
             ssd1306Refresh();
-            hal_os_sleep(VALIDATE_WAIT_TIME);
+            HAL_Delay(VALIDATE_WAIT_TIME);
         }
         else if (GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET)
         {
@@ -691,7 +691,7 @@ int hal_ui_modify_long_param(HAL_UI_HANDLE handle, char *param_name,
 	            sprintf(str, "%10d", param_copy);
 	            ssd1306DrawString(0, 28, str, &Font_8x8);
 	            ssd1306Refresh();
-	            hal_os_sleep(100);
+	            HAL_Delay(100);
 	        }
 	        else if (GPIO_ReadInputDataBit(JOYSTICK_DOWN) == Bit_RESET)
 	        {
@@ -701,7 +701,7 @@ int hal_ui_modify_long_param(HAL_UI_HANDLE handle, char *param_name,
 	            sprintf(str, "%10i", (int)param_copy);
 	            ssd1306DrawString(0, 28, str, &Font_8x8);
 	            ssd1306Refresh();
-	            hal_os_sleep(100);
+	            HAL_Delay(100);
 	        }
 	        else if (GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET)
 	        {
@@ -776,7 +776,7 @@ int hal_ui_modify_int_param(HAL_UI_HANDLE handle, char *param_name,
 			sprintf(str, "%10i", (int)param_copy);
 			ssd1306DrawString(0, 28, str, &Font_8x8);
 			ssd1306Refresh();
-			hal_os_sleep(100);
+			HAL_Delay(100);
 		}
 		else if (GPIO_ReadInputDataBit(JOYSTICK_DOWN) == Bit_RESET)
 		{
@@ -786,14 +786,14 @@ int hal_ui_modify_int_param(HAL_UI_HANDLE handle, char *param_name,
 			sprintf(str, "%10i", (int)param_copy);
 			ssd1306DrawString(0, 28, str, &Font_8x8);
 			ssd1306Refresh();
-			hal_os_sleep(100);
+			HAL_Delay(100);
 		}
 		else if (GPIO_ReadInputDataBit(JOYSTICK_RIGHT) == Bit_RESET)
 		{
 			hal_ui_anti_rebonds(JOYSTICK_RIGHT);
 			if(collone==0)
 			{
-				hal_os_sleep(VALIDATE_WAIT_TIME);
+				HAL_Delay(VALIDATE_WAIT_TIME);
 				*param = param_copy;
 				hal_ui_clear_scr(handle);
 				ssd1306Refresh();

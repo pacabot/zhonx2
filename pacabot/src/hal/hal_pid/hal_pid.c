@@ -302,13 +302,13 @@ void TIM5_IRQHandler(void)
     switch (pid.type_correction)
     {
         case L_CORRECTION:
-        	if (pid.current_left_counter < zhonx_settings.max_correction)
+        	if (pid.current_left_counter < zhonxSettings.max_correction)
         	{
         		pid.current_left_counter++;
         	}
             break;
         case R_CORRECTION:
-        	if (pid.current_right_counter < zhonx_settings.max_correction)
+        	if (pid.current_right_counter < zhonxSettings.max_correction)
         	{
         		pid.current_right_counter++;
         	}

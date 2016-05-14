@@ -261,11 +261,11 @@ void ssd1306Init(unsigned char vccstate)
 
 	// Reset the LCD
 	GPIO_WriteBit(RST_GPIO_PORT, RST_PIN, 1);
-	hal_os_sleep(10);
+	HAL_Delay(10);
 	GPIO_WriteBit(RST_GPIO_PORT, RST_PIN, 0);
-	hal_os_sleep(10);
+	HAL_Delay(10);
 	GPIO_WriteBit(RST_GPIO_PORT, RST_PIN, 1);
-	hal_os_sleep(20);
+	HAL_Delay(20);
 
 	// Initialisation sequence
 	CMD(SSD1306_DISPLAYOFF);                    // 0xAE
@@ -464,6 +464,12 @@ void ssd1306DrawString(unsigned int x, unsigned int y, const char *text, const F
 		ssd1306DrawChar(x + (l * (font->u8Width + 1)), y, text[l], font);
 	}
 }
+
+void ssd1306DrawStringAtLine(unsigned int x, unsigned int line, const char *text, const FONT_DEF *font)
+{
+    ssd1306DrawString(x, line * LINE_SPACING + HEAD_MARGIN, text, font);
+}
+
 /**************************************************************************/
 //Print a text and value.
 void ssd1306PrintInt(unsigned int x, unsigned int y, const char *text, unsigned int val, const FONT_DEF *font)

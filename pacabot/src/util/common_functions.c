@@ -37,7 +37,7 @@
 //extern app_config app_context;
 
 
-// prend une chaine de caractère composée de chiffres Hexa et convertit en binaire
+// prend une chaine de caractï¿½re composï¿½e de chiffres Hexa et convertit en binaire
 void ConvertBinaire(char tab[][MAZE_MAX_SIZE])
 {
     char pos = 0;
@@ -59,7 +59,7 @@ void ConvertBinaire(char tab[][MAZE_MAX_SIZE])
 }
 
 
-//une séquence binaire est convertie en chaine pour affichage
+//une sï¿½quence binaire est convertie en chaine pour affichage
 void Convertcharacter(char tab[],char nb)
 {
     char pos;
@@ -81,11 +81,11 @@ void bip4(void)
     while (i < 3)
     {
         hal_beeper_beep(app_context.beeper, 650, 200);
-        hal_os_sleep(800);
+        HAL_Delay(800);
         i++;
     }
     hal_beeper_beep(app_context.beeper, 2640, 500);
-    hal_os_sleep(500);
+    HAL_Delay(500);
 }
 
 
