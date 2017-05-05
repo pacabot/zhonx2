@@ -169,7 +169,7 @@ static const menu_item main_menu[] =
     {"Maze menu",                       display_maze_menu},
     {"Parameters",                      display_parameters},
     {"Tests menu",                      display_tests_menu},
-    {"[b]Beeper Enabled?   ",           null, &zhonx_settings.beeper_enabled},
+    {"[b]Beeper Enabled?   ",           null, &zhonxSettings.beeper_enabled},
     {null,                              null}
 };
 
@@ -226,10 +226,10 @@ static const menu_item maze_menu[] =
 {
     {"MAZE MENU",                   null},
     {"New maze",                    maze},
-    {"x finish",					&zhonx_settings.x_finish_maze},
-    {"y finish",					&zhonx_settings.y_finish_maze},
+    {"x finish",					&zhonxSettings.x_finish_maze},
+    {"y finish",					&zhonxSettings.y_finish_maze},
 //    {"Trajectory...",               display_trajectory_menu},
-//    {"[b]Calibration  :",           null, &zhonx_settings.calibration_enabled},
+//    {"[b]Calibration  :",           null, &zhonxSettings.calibration_enabled},
 //    {"Restore maze",                display_restore_maze_menu},
     {null,                          null}
 };
@@ -238,11 +238,11 @@ static const menu_item maze_menu[] =
 static const menu_item motion_settings_menu[] =
 {
     {"MOTION SETTINGS",             null},
-    {"[l]Initial speed :",          null, &zhonx_settings.initial_speed, 10},
-    {"[l]Max speed dist:",          null, &zhonx_settings.max_speed_distance, 10},
-    {"[l]Default accel :",          null, &zhonx_settings.default_accel, 1},
-    {"[l]Rotate accel  :",          null, &zhonx_settings.rotate_accel, 1},
-    {"[l]Emerg decel   :",          null, &zhonx_settings.emergency_decel, 5},
+    {"[l]Initial speed :",          null, &zhonxSettings.initial_speed, 10},
+    {"[l]Max speed dist:",          null, &zhonxSettings.max_speed_distance, 10},
+    {"[l]Default accel :",          null, &zhonxSettings.default_accel, 1},
+    {"[l]Rotate accel  :",          null, &zhonxSettings.rotate_accel, 1},
+    {"[l]Emerg decel   :",          null, &zhonxSettings.emergency_decel, 5},
     {null,                          null}
 };
 
@@ -250,9 +250,9 @@ static const menu_item motion_settings_menu[] =
 static const menu_item pid_settings_menu[] =
 {
     {"PID SETTINGS",                null},
-    {"[l]Proportional  :",          null, &zhonx_settings.correction_p, 10},
-    {"[l]Integral      :",          null, &zhonx_settings.correction_i, 10},
-    {"[l]Max correction:",          null, &zhonx_settings.max_correction, 10},
+    {"[l]Proportional  :",          null, &zhonxSettings.correction_p, 10},
+    {"[l]Integral      :",          null, &zhonxSettings.correction_i, 10},
+    {"[l]Max correction:",          null, &zhonxSettings.max_correction, 10},
     {null,                          null}
 };
 
@@ -261,10 +261,10 @@ static const menu_item pid_settings_menu[] =
 static const menu_item sensor_settings_menu[] =
 {
     {"COLOR SENSOR SETTINGS",       null},
-    {"[b]Enabled?      :",          null, &zhonx_settings.color_sensor_enabled},
+    {"[b]Enabled?      :",          null, &zhonxSettings.color_sensor_enabled},
     {"Calibrate color",             sensor_calibrate},
-    {"[l]Threshold val :",          null, &zhonx_settings.threshold_color, 500},
-    {"[b]End Greater?  :",          null, &zhonx_settings.threshold_greater},
+    {"[l]Threshold val :",          null, &zhonxSettings.threshold_color, 500},
+    {"[b]End Greater?  :",          null, &zhonxSettings.threshold_greater},
     {null,                          null}
 };
 
@@ -445,7 +445,7 @@ int display_save_settings(void)
     {
         rv = hal_nvm_write(app_context.nvm,
                            (void *)&stored_settings[selected_index - 1],
-                           &zhonx_settings, sizeof(robot_settings));
+                           &zhonxSettings, sizeof(robot_settings));
         sprintf(str, "Saved on [%i]!", selected_index);
         hal_ui_display_prompt(app_context.ui, "SETTINGS SAVED", str);
     }
@@ -470,7 +470,7 @@ int display_restore_settings(void)
 
     if (selected_index > 0)
     {
-        memcpy(&zhonx_settings,
+        memcpy(&zhonxSettings,
                &stored_settings[selected_index - 1],
                sizeof(robot_settings));
         sprintf(str, "[%i] restored!", selected_index);
